@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Duty, ShiftType } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { addDays, format } from "date-fns"
+import { addDays, format, isValid } from "date-fns"
 import { Button } from "../ui/button"
 import { Edit } from "lucide-react"
 
@@ -34,6 +34,10 @@ export function RosterCalendar({ duties }: { duties: Duty[] }) {
     }, [duties]);
 
     const DayWithShift = ({ date }: { date: Date }) => {
+        if (!date || !isValid(date)) {
+            return null;
+        }
+
         const dateString = format(date, 'yyyy-MM-dd');
         const shift = dutiesByDate.get(dateString);
 
