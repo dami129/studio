@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { generateQuoteAction } from "@/app/actions/generate-quote";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,7 @@ function SubmitButton() {
 }
 
 export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardProps) {
-  const [state, formAction] = useFormState(generateQuoteAction, initialAiState);
+  const [state, formAction] = useActionState(generateQuoteAction, initialAiState);
   const [recentActivity, setRecentActivity] = useState("");
 
   const personalizedInput: PersonalizedQuoteInput = {
@@ -103,7 +103,7 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
                 <SelectContent>
                   {recentActivities.map((activity) => (
                     <SelectItem key={activity.value} value={activity.label}>
-                      <div className="flex items-center">
+                       <div className="flex items-center">
                         {activity.icon}
                         {activity.label}
                       </div>
