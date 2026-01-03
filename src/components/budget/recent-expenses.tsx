@@ -15,14 +15,14 @@ import {
 } from "@/components/ui/table"
 import type { Expense, ExpenseCategory } from "@/lib/types"
 import { format, parseISO } from "date-fns"
-import { ShoppingCart, Bus, Utensils, Heartbeat, BookOpen, Film, Tag } from "lucide-react"
+import { ShoppingCart, Bus, Utensils, Heart, BookOpen, Film, Tag } from "lucide-react"
 
 const categoryIcons: Record<ExpenseCategory, React.ReactNode> = {
     'Food': <Utensils className="h-5 w-5 text-muted-foreground" />,
     'Transport': <Bus className="h-5 w-5 text-muted-foreground" />,
     'Mobile bills': <Film className="h-5 w-5 text-muted-foreground" />,
     'Groceries': <ShoppingCart className="h-5 w-5 text-muted-foreground" />,
-    'Health': <Heartbeat className="h-5 w-5 text-muted-foreground" />,
+    'Health': <Heart className="h-5 w-5 text-muted-foreground" />,
     'Education': <BookOpen className="h-5 w-5 text-muted-foreground" />,
     'Shopping': <Tag className="h-5 w-5 text-muted-foreground" />,
     'Salon': <Tag className="h-5 w-5 text-muted-foreground" />,
