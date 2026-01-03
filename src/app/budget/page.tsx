@@ -1,0 +1,71 @@
+import { AddExpenseForm } from "@/components/budget/add-expense-form";
+import { BudgetSummaryChart } from "@/components/budget/budget-summary-chart";
+import { RecentExpenses } from "@/components/budget/recent-expenses";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { mockExpenses, mockIncome } from "@/lib/data";
+import { DollarSign } from "lucide-react";
+
+export default function BudgetPage() {
+  const totalIncome = mockIncome.reduce((sum, item) => sum + item.amount, 0);
+  const totalExpenses = mockExpenses.reduce((sum, item) => sum + item.amount, 0);
+  const remaining = totalIncome - totalExpenses;
+
+  const formatter = new Intl.NumberFormat('en-LK', {
+    style: 'currency',
+    currency: 'LKR',
+    minimumFractionDigits: 0,
+  });
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground/90">
+          Budget Manager
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Keep track of your income and expenses.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{formatter.format(totalIncome)}</div>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{formatter.format(totalExpenses)}</div>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Remaining</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold text-primary">{formatter.format(remaining)}</div>
+            </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+            <RecentExpenses expenses={mockExpenses} />
+        </div>
+        <div className="space-y-6">
+            <BudgetSummaryChart expenses={mockExpenses} />
+            <AddExpenseForm />
+        </div>
+      </div>
+    </div>
+  );
+}
