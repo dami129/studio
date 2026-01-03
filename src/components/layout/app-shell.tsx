@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -17,6 +18,7 @@ import {
   LayoutDashboard,
   User,
   Wallet,
+  Menu,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -59,11 +61,9 @@ function MainNav() {
 function AppHeader() {
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 sm:px-6">
-      <SidebarTrigger asChild>
-        <Button size="icon" variant="outline" className="md:hidden">
-          <Icons.logo className="h-5 w-5" />
-          <span className="sr-only">Toggle Menu</span>
-        </Button>
+      <SidebarTrigger className="md:hidden">
+        <Menu className="h-5 w-5" />
+        <span className="sr-only">Toggle Menu</span>
       </SidebarTrigger>
       <div className="flex-1">
         {/* Can add breadcrumbs or page title here */}
