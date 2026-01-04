@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -5,26 +6,15 @@ import type { Duty } from "@/lib/types"
 import { Download, Share2 } from "lucide-react"
 import { Button } from "../ui/button"
 
-const shiftEmojis = {
-    Morning: "☀️",
-    Evening: "🌆",
-    Night: "🌙",
-    Overtime: "💪",
-    Leave: "🌴",
-    Off: "😌",
-}
-
 export function RosterSummary({ duties }: { duties: Duty[] }) {
     const totalDuties = duties.filter(d => d.type === 'Morning' || d.type === 'Evening' || d.type === 'Night').length;
     const overtimeDuties = duties.filter(d => d.type === 'Overtime').length;
     const offDays = duties.filter(d => d.type === 'Off').length;
-    const leaveDays = duties.filter(d => d.type === 'Leave').length;
 
     const summaryItems = [
         { label: "Total Duties", value: totalDuties, emoji: "🩺" },
-        { label: "Overtime Duties", value: overtimeDuties, emoji: "💪" },
+        { label: "Overtime", value: overtimeDuties, emoji: "💪" },
         { label: "Off Days", value: offDays, emoji: "😌" },
-        { label: "Leave Days", value: leaveDays, emoji: "🌴" },
     ];
 
     return (

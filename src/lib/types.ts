@@ -1,3 +1,4 @@
+
 export type ShiftType = 'Morning' | 'Evening' | 'Night' | 'Off' | 'Leave' | 'Overtime' | 'Training';
 
 export type Duty = {
@@ -50,4 +51,8 @@ export type Income = {
   date: string;
   amount: number;
   source: IncomeSource;
+};
+
+export type ShiftColors = {
+  [key in ShiftType]: string;
 };
