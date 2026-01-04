@@ -5,13 +5,7 @@ import * as React from "react";
 import type { Duty, ShiftType, ShiftColors } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
-  addDays,
   format,
-  getDaysInMonth,
-  getDay,
-  startOfMonth,
-  isSameMonth,
-  getDate,
   isToday,
 } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { RosterDay } from "./roster-day";
 
 const normalShifts: ShiftType[] = ["Morning", "Evening", "Night"];
 const specialShifts: ShiftType[] = ["Training", "Leave", "Off"];
@@ -34,12 +29,19 @@ export function RosterCalendar({
   duties,
   onUpdateDuty,
   shiftColors,
+  month,
+  calendarDays,
+  weekDays,
+  emptyCells
 }: {
   duties: Duty[];
   onUpdateDuty: (date: string, type: ShiftType) => void;
   shiftColors: ShiftColors;
+  month: Date;
+  calendarDays: number[];
+  weekDays: string[];
+  emptyCells: undefined[]
 }) {
-  const [month, setMonth] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [isOvertimePopoverOpen, setOvertimePopoverOpen] = React.useState(false);
 
@@ -60,15 +62,6 @@ export function RosterCalendar({
     });
     return map;
   }, [duties]);
-
-  const firstDayOfMonth = startOfMonth(month);
-  const daysInMonth = getDaysInMonth(month);
-  const startingDayOfWeek = getDay(firstDayOfMonth);
-
-  const calendarDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const emptyCells = Array.from({ length: startingDayOfWeek });
-
-  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const handleDateClick = (day: number) => {
     setSelectedDate(new Date(month.getFullYear(), month.getMonth(), day));
@@ -185,11 +178,7 @@ export function RosterCalendar({
                                   onUpdateDuty(selectedDateString, shift);
                                   setOvertimePopoverOpen(false);
                                 }}
-                                variant={shiftsForSelectedDate.includes(shift) ? "default" : "outline"}
-                                className={cn({
-                                  [shiftColors[shift]]: shiftsForSelectedDate.includes(shift),
-                                  'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
-                                })}
+                                variant="outline"
                             >
                                 {shift}
                             </Button>
