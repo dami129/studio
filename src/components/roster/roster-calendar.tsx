@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { RosterDay } from "./roster-day";
 
 const normalShifts: ShiftType[] = ["Morning", "Evening", "Night"];
 const specialShifts: ShiftType[] = ["Training", "Leave", "Off"];
