@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from "react";
@@ -84,7 +85,7 @@ export default function RosterPage() {
           />
         </div>
         <div className="space-y-6">
-          <RosterSummary duties={duties} />
+          <RosterSummary duties={duties} month={month} />
           <RosterSettings 
             shiftColors={shiftColors}
             onColorChange={handleColorChange}
@@ -94,4 +95,5 @@ export default function RosterPage() {
     </div>
   );
 }
+
 

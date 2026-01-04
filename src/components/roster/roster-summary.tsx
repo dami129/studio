@@ -5,16 +5,25 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import type { Duty } from "@/lib/types"
 import { Download, Share2 } from "lucide-react"
 import { Button } from "../ui/button"
+import { isSameMonth, parseISO } from "date-fns"
+import React from "react"
 
-export function RosterSummary({ duties }: { duties: Duty[] }) {
-    const totalDuties = duties.filter(d => d.type === 'Morning' || d.type === 'Evening' || d.type === 'Night').length;
-    const overtimeDuties = duties.filter(d => d.type.startsWith('Overtime')).length;
-    const offDays = duties.filter(d => d.type === 'Off').length;
+export function RosterSummary({ duties, month }: { duties: Duty[], month: Date }) {
+
+    const summary = React.useMemo(() => {
+        const monthlyDuties = duties.filter(d => isSameMonth(parseISO(d.date), month));
+        
+        const totalDuties = monthlyDuties.filter(d => ['Morning', 'Evening', 'Night'].includes(d.type)).length;
+        const overtimeDuties = monthlyDuties.filter(d => d.type.startsWith('Overtime')).length;
+        const offDays = monthlyDuties.filter(d => d.type === 'Off').length;
+
+        return { totalDuties, overtimeDuties, offDays };
+    }, [duties, month]);
 
     const summaryItems = [
-        { label: "Total Duties", value: totalDuties, emoji: "🩺" },
-        { label: "Overtime", value: overtimeDuties, emoji: "💪" },
-        { label: "Off Days", value: offDays, emoji: "😌" },
+        { label: "Total Duties", value: summary.totalDuties, emoji: "🩺" },
+        { label: "Overtime", value: summary.overtimeDuties, emoji: "💪" },
+        { label: "Off Days", value: summary.offDays, emoji: "😌" },
     ];
 
     return (
