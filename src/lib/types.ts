@@ -1,5 +1,15 @@
 
-export type ShiftType = 'Morning' | 'Evening' | 'Night' | 'Off' | 'Leave' | 'Overtime' | 'Training';
+
+export type ShiftType = 
+  | 'Morning' 
+  | 'Evening' 
+  | 'Night' 
+  | 'Off' 
+  | 'Leave' 
+  | 'Training'
+  | 'Overtime (Morning)'
+  | 'Overtime (Evening)'
+  | 'Overtime (Night)';
 
 export type Duty = {
   date: string;

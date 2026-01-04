@@ -14,7 +14,9 @@ export default function RosterPage() {
     Morning: "bg-blue-200 text-blue-800 hover:bg-blue-200/80",
     Evening: "bg-orange-200 text-orange-800 hover:bg-orange-200/80",
     Night: "bg-indigo-200 text-indigo-800 hover:bg-indigo-200/80",
-    Overtime: "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
+    'Overtime (Morning)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
+    'Overtime (Evening)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
+    'Overtime (Night)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
     Training: "bg-green-200 text-green-800 hover:bg-green-200/80",
     Leave: "bg-purple-200 text-purple-800 hover:bg-purple-200/80",
     Off: "bg-gray-200 text-gray-800 hover:bg-gray-200/80",
@@ -28,6 +30,13 @@ export default function RosterPage() {
       if (existingDutyIndex > -1) {
         return prevDuties.filter((_, index) => index !== existingDutyIndex);
       } else {
+        const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
+        if (isNormalShift) {
+            // Remove other normal shifts for that day
+            const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
+            const filteredDuties = prevDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
+            return [...filteredDuties, { date, type }];
+        }
         return [...prevDuties, { date, type }];
       }
     });

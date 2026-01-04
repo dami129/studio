@@ -23,9 +23,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const normalShifts: ShiftType[] = ["Morning", "Evening", "Night"];
-const specialShifts: ShiftType[] = ["Overtime", "Training", "Leave", "Off"];
+const specialShifts: ShiftType[] = ["Training", "Leave", "Off"];
+const overtimeShifts: ShiftType[] = ["Overtime (Morning)", "Overtime (Evening)", "Overtime (Night)"];
+
 
 export function RosterCalendar({
   duties,
@@ -138,7 +141,7 @@ export function RosterCalendar({
               Manage Duty for {selectedDate && format(selectedDate, "MMMM d, yyyy")}
             </DialogTitle>
             <DialogDescription>
-              Select the duties that apply to this day.
+              Select the duties that apply to this day. You can select one normal duty and multiple other duties.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -157,6 +160,29 @@ export function RosterCalendar({
                   </Button>
                 ))}
               </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">Overtime</h4>
+               <Popover>
+                <PopoverTrigger asChild>
+                    <Button variant="outline">Add Overtime</Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-2">
+                    <div className="flex flex-col gap-2">
+                        {overtimeShifts.map(shift => (
+                           <Button
+                                key={shift}
+                                onClick={() => onUpdateDuty(selectedDateString, shift)}
+                                className={cn(shiftColors[shift], {
+                                'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
+                                })}
+                            >
+                                {shift}
+                            </Button>
+                        ))}
+                    </div>
+                </PopoverContent>
+               </Popover>
             </div>
              <div>
               <h4 className="font-semibold mb-2">Other Shift Types</h4>

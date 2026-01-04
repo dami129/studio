@@ -8,7 +8,7 @@ import { Button } from "../ui/button"
 
 export function RosterSummary({ duties }: { duties: Duty[] }) {
     const totalDuties = duties.filter(d => d.type === 'Morning' || d.type === 'Evening' || d.type === 'Night').length;
-    const overtimeDuties = duties.filter(d => d.type === 'Overtime').length;
+    const overtimeDuties = duties.filter(d => d.type.startsWith('Overtime')).length;
     const offDays = duties.filter(d => d.type === 'Off').length;
 
     const summaryItems = [
