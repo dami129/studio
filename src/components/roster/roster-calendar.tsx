@@ -41,6 +41,8 @@ export function RosterCalendar({
 }) {
   const [month, setMonth] = React.useState(new Date());
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+  const [isOvertimePopoverOpen, setOvertimePopoverOpen] = React.useState(false);
+
 
   const dutiesByDate = React.useMemo(() => {
     const map = new Map<string, ShiftType[]>();
@@ -163,7 +165,7 @@ export function RosterCalendar({
             </div>
             <div>
               <h4 className="font-semibold mb-2">Overtime</h4>
-               <Popover>
+               <Popover open={isOvertimePopoverOpen} onOpenChange={setOvertimePopoverOpen}>
                 <PopoverTrigger asChild>
                     <Button variant="outline">Add Overtime</Button>
                 </PopoverTrigger>
@@ -172,7 +174,10 @@ export function RosterCalendar({
                         {overtimeShifts.map(shift => (
                            <Button
                                 key={shift}
-                                onClick={() => onUpdateDuty(selectedDateString, shift)}
+                                onClick={() => {
+                                  onUpdateDuty(selectedDateString, shift);
+                                  setOvertimePopoverOpen(false);
+                                }}
                                 className={cn(shiftColors[shift], {
                                 'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                                 })}

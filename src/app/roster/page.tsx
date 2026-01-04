@@ -27,16 +27,19 @@ export default function RosterPage() {
       const existingDutyIndex = prevDuties.findIndex(
         d => d.date === date && d.type === type
       );
+
       if (existingDutyIndex > -1) {
+        // If the duty exists, remove it
         return prevDuties.filter((_, index) => index !== existingDutyIndex);
       } else {
         const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
         if (isNormalShift) {
-            // Remove other normal shifts for that day
-            const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
-            const filteredDuties = prevDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
-            return [...filteredDuties, { date, type }];
+          // If adding a normal shift, remove any other normal shifts for that day
+          const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
+          const filteredDuties = prevDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
+          return [...filteredDuties, { date, type }];
         }
+        // For any other shift type (Overtime, Leave, etc.), just add it
         return [...prevDuties, { date, type }];
       }
     });
