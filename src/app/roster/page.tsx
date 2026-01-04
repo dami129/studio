@@ -10,15 +10,12 @@ export default function RosterPage() {
           Duty Roster
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage your monthly shifts and track your schedule.
+          Here is your schedule for the upcoming month.
         </p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
             <RosterCalendar duties={mockDuties} />
-        </div>
-        <div>
-            <RosterSummary duties={mockDuties} />
         </div>
       </div>
     </div>

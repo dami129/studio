@@ -1,87 +1,89 @@
 "use client"
 
 import * as React from "react"
-import { Calendar } from "@/components/ui/calendar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Duty, ShiftType } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { addDays, format, isValid } from "date-fns"
-import { Button } from "../ui/button"
-import { Edit } from "lucide-react"
+import { addDays, format, getDaysInMonth, getDay, startOfMonth, isSameMonth, getDate, isToday } from "date-fns"
+import { Badge } from "@/components/ui/badge"
 
 const shiftColors: Record<ShiftType, string> = {
-    Morning: "bg-blue-200/50 border-blue-300 text-blue-800 dark:bg-blue-900/50 dark:border-blue-700 dark:text-blue-200",
-    Evening: "bg-orange-200/50 border-orange-300 text-orange-800 dark:bg-orange-900/50 dark:border-orange-700 dark:text-orange-200",
-    Night: "bg-indigo-200/50 border-indigo-300 text-indigo-800 dark:bg-indigo-900/50 dark:border-indigo-700 dark:text-indigo-200",
-    Off: "bg-gray-200/50 border-gray-300 text-gray-800 dark:bg-gray-800/50 dark:border-gray-600 dark:text-gray-200",
-    Leave: "bg-purple-200/50 border-purple-300 text-purple-800 dark:bg-purple-900/50 dark:border-purple-700 dark:text-purple-200",
-    Overtime: "bg-yellow-200/50 border-yellow-300 text-yellow-800 dark:bg-yellow-900/50 dark:border-yellow-700 dark:text-yellow-200",
+    Morning: "bg-blue-200 text-blue-800 hover:bg-blue-200/80",
+    Evening: "bg-orange-200 text-orange-800 hover:bg-orange-200/80",
+    Night: "bg-indigo-200 text-indigo-800 hover:bg-indigo-200/80",
+    Off: "bg-gray-200 text-gray-800 hover:bg-gray-200/80",
+    Leave: "bg-purple-200 text-purple-800 hover:bg-purple-200/80",
+    Overtime: "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
+    Training: "bg-green-200 text-green-800 hover:bg-green-200/80"
 };
 
 export function RosterCalendar({ duties }: { duties: Duty[] }) {
     const [month, setMonth] = React.useState(new Date());
 
     const dutiesByDate = React.useMemo(() => {
-        const map = new Map<string, ShiftType>();
+        const map = new Map<string, ShiftType[]>();
         duties.forEach(duty => {
             const dutyDate = new Date(duty.date);
-            // Adjust for timezone differences
-            const localDate = addDays(dutyDate, 1);
-            map.set(format(localDate, 'yyyy-MM-dd'), duty.type);
+            const localDateStr = format(dutyDate, 'yyyy-MM-dd');
+            if (!map.has(localDateStr)) {
+                map.set(localDateStr, []);
+            }
+            map.get(localDateStr)!.push(duty.type);
         });
         return map;
     }, [duties]);
 
-    const DayWithShift = ({ date }: { date: Date }) => {
-        if (!date || !isValid(date)) {
-            return null;
-        }
+    const firstDayOfMonth = startOfMonth(month);
+    const daysInMonth = getDaysInMonth(month);
+    const startingDayOfWeek = getDay(firstDayOfMonth); // 0 (Sun) to 6 (Sat)
 
-        const dateString = format(date, 'yyyy-MM-dd');
-        const shift = dutiesByDate.get(dateString);
+    const calendarDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    const emptyCells = Array.from({ length: startingDayOfWeek });
 
-        if (shift) {
-            return (
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <div className={cn("w-full h-full flex items-center justify-center rounded-md cursor-pointer", shiftColors[shift])}>
-                            {date.getDate()}
-                        </div>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-2">
-                        <div className="flex flex-col gap-2">
-                            <span className="text-sm font-semibold">{format(date, 'EEE, MMM d')} - {shift}</span>
-                            <Button size="sm" variant="outline"><Edit className="w-3 h-3 mr-2" /> Edit Shift</Button>
-                        </div>
-                    </PopoverContent>
-                </Popover>
-            );
-        }
-        return (
-            <div className="w-full h-full flex items-center justify-center">
-                {date.getDate()}
-            </div>
-        );
-    };
-
+    const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    
     return (
-        <Card>
-            <CardContent className="p-2 md:p-4">
-                <Calendar
-                    mode="single"
-                    month={month}
-                    onMonthChange={setMonth}
-                    className="w-full"
-                    classNames={{
-                        cell: "h-12 w-14 lg:h-16 lg:w-20 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                        day: "h-full w-full p-1 rounded-md",
-                    }}
-                    components={{
-                        Day: ({ date }) => <DayWithShift date={date} />,
-                    }}
-                />
-            </CardContent>
-        </Card>
+        <div className="bg-card rounded-lg border shadow-sm">
+            <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold">{format(month, 'MMMM yyyy')}</h2>
+                    {/* Add month navigation buttons here if needed */}
+                </div>
+                <div className="grid grid-cols-7 gap-1">
+                    {weekDays.map(day => (
+                        <div key={day} className="text-center font-semibold text-muted-foreground text-sm pb-2 border-b">
+                            {day}
+                        </div>
+                    ))}
+                    {emptyCells.map((_, i) => (
+                        <div key={`empty-${i}`} className="border-r border-b"></div>
+                    ))}
+                    {calendarDays.map(day => {
+                        const date = new Date(month.getFullYear(), month.getMonth(), day);
+                        const dateString = format(date, 'yyyy-MM-dd');
+                        const dayShifts = dutiesByDate.get(dateString);
+                        const isCurrentDay = isToday(date);
+                        
+                        return (
+                            <div key={day} className={cn("p-2 h-28 border-r border-b relative", {
+                                "bg-primary/10": isCurrentDay
+                            })}>
+                                <div className={cn("font-semibold", {
+                                    "text-primary font-bold": isCurrentDay
+                                })}>
+                                  {day}
+                                </div>
+                                <div className="mt-1 flex flex-col gap-1">
+                                    {dayShifts?.map((shift, i) => (
+                                        <Badge key={i} className={cn("text-xs font-bold justify-center", shiftColors[shift])}>
+                                            {shift}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        </div>
     )
 }
