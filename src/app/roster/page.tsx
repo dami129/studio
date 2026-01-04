@@ -7,6 +7,7 @@ import { RosterSummary } from "@/components/roster/roster-summary";
 import { mockDuties } from "@/lib/data";
 import type { Duty, ShiftType, ShiftColors } from "@/lib/types";
 import { RosterSettings } from "@/components/roster/roster-settings";
+import { getDaysInMonth, startOfMonth, format, getDay } from "date-fns";
 
 export default function RosterPage() {
   const [duties, setDuties] = React.useState<Duty[]>(mockDuties);
@@ -22,31 +23,42 @@ export default function RosterPage() {
     Off: "bg-gray-200 text-gray-800 hover:bg-gray-200/80",
   });
 
+  const [currentDate, setCurrentDate] = React.useState(new Date());
+
   const handleUpdateDuty = (date: string, type: ShiftType) => {
     setDuties(prevDuties => {
-      const dutiesForDate = prevDuties.filter(d => d.date === date);
-      const dutyExists = dutiesForDate.some(d => d.type === type);
+      const dutyIndex = prevDuties.findIndex(d => d.date === date && d.type === type);
       const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
+      
+      let newDuties = [...prevDuties];
 
-      if (dutyExists) {
-        // If the duty exists, remove it.
-        return prevDuties.filter(d => !(d.date === date && d.type === type));
+      if (dutyIndex > -1) {
+        // Duty exists, so remove it
+        newDuties.splice(dutyIndex, 1);
       } else {
-        // If the duty doesn't exist, add it.
-        let newDuties = [...prevDuties];
+        // Duty doesn't exist, so add it
         if (isNormalShift) {
-          // If adding a normal shift, remove any other normal shifts for that day.
+          // If adding a normal shift, remove any other normal shifts for that day first
           const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
           newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
         }
-        return [...newDuties, { date, type }];
+        newDuties.push({ date, type });
       }
+      return newDuties;
     });
   };
 
   const handleColorChange = (shiftType: ShiftType, colorClass: string) => {
     setShiftColors(prev => ({ ...prev, [shiftType]: colorClass }));
   };
+
+  const month = startOfMonth(currentDate);
+  const daysInMonth = getDaysInMonth(month);
+  const calendarDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const startDay = getDay(month); // 0 (Sun) - 6 (Sat)
+  const emptyCells = Array(startDay).fill(undefined);
+  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 
   return (
     <div className="space-y-6">
@@ -64,6 +76,10 @@ export default function RosterPage() {
             duties={duties}
             onUpdateDuty={handleUpdateDuty}
             shiftColors={shiftColors}
+            month={month}
+            calendarDays={calendarDays}
+            weekDays={weekDays}
+            emptyCells={emptyCells}
           />
         </div>
         <div className="space-y-6">
