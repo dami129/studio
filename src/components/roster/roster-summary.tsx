@@ -8,22 +8,45 @@ import { Button } from "../ui/button"
 import { isSameMonth, parseISO } from "date-fns"
 import React from "react"
 
+function calculateMonthlySummary(duties: Duty[], currentMonth: Date) {
+  if (!currentMonth || !(currentMonth instanceof Date) || isNaN(currentMonth.getTime())) {
+    return {
+      totalDuties: 0,
+      overtimeCount: 0,
+      offDaysCount: 0,
+    };
+  }
+  
+  const monthlyDuties = duties.filter(d =>
+    isSameMonth(parseISO(d.date), currentMonth)
+  );
+
+  const normalDuties = monthlyDuties.filter(d =>
+    ['Morning', 'Evening', 'Night'].includes(d.type)
+  );
+
+  const overtimeDuties = monthlyDuties.filter(d =>
+    d.type.startsWith('Overtime')
+  );
+
+  const offDays = monthlyDuties.filter(d => d.type === 'Off');
+
+  return {
+    totalDuties: normalDuties.length,
+    overtimeCount: overtimeDuties.length,
+    offDaysCount: offDays.length,
+  };
+}
+
+
 export function RosterSummary({ duties, month }: { duties: Duty[], month: Date }) {
 
-    const summary = React.useMemo(() => {
-        const monthlyDuties = duties.filter(d => isSameMonth(parseISO(d.date), month));
-        
-        const totalDuties = monthlyDuties.filter(d => ['Morning', 'Evening', 'Night'].includes(d.type)).length;
-        const overtimeDuties = monthlyDuties.filter(d => d.type.startsWith('Overtime')).length;
-        const offDays = monthlyDuties.filter(d => d.type === 'Off').length;
-
-        return { totalDuties, overtimeDuties, offDays };
-    }, [duties, month]);
+    const summary = React.useMemo(() => calculateMonthlySummary(duties, month), [duties, month]);
 
     const summaryItems = [
         { label: "Total Duties", value: summary.totalDuties, emoji: "🩺" },
-        { label: "Overtime", value: summary.overtimeDuties, emoji: "💪" },
-        { label: "Off Days", value: summary.offDays, emoji: "😌" },
+        { label: "Overtime", value: summary.overtimeCount, emoji: "💪" },
+        { label: "Off Days", value: summary.offDaysCount, emoji: "😌" },
     ];
 
     return (
