@@ -17,7 +17,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const normalShifts: ShiftType[] = ["Morning", "Evening", "Night"];
 const specialShifts: ShiftType[] = ["Training", "Leave", "Off"];
@@ -42,17 +41,13 @@ export function RosterCalendar({
   emptyCells: undefined[]
 }) {
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
-  const [isOvertimePopoverOpen, setOvertimePopoverOpen] = React.useState(false);
+  const [showOvertimeOptions, setShowOvertimeOptions] = React.useState(false);
 
 
   const dutiesByDate = React.useMemo(() => {
     const map = new Map<string, ShiftType[]>();
     duties.forEach(duty => {
-      // Dates from mock data don't have timezone, so they are treated as UTC.
-      // New Date() will create a date in the local timezone.
-      // To compare them correctly, we need to treat them consistently.
-      // By parsing the string and then formatting, we ignore timezone differences for the key.
-      const dutyDate = new Date(duty.date + 'T00:00:00'); // Assume midnight UTC to be safe
+      const dutyDate = new Date(duty.date + 'T00:00:00');
       const localDateStr = format(dutyDate, "yyyy-MM-dd");
       if (!map.has(localDateStr)) {
         map.set(localDateStr, []);
@@ -64,10 +59,21 @@ export function RosterCalendar({
 
   const handleDateClick = (day: number) => {
     setSelectedDate(new Date(month.getFullYear(), month.getMonth(), day));
+    setShowOvertimeOptions(false); // Reset on new date selection
   };
+
+  const handleCloseDialog = () => {
+    setSelectedDate(null);
+    setShowOvertimeOptions(false);
+  }
 
   const selectedDateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
   const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
+
+  const handleOvertimeButtonClick = (shift: ShiftType) => {
+    onUpdateDuty(selectedDateString, shift);
+    setShowOvertimeOptions(false);
+  }
 
   return (
     <>
@@ -121,7 +127,7 @@ export function RosterCalendar({
                           "text-xs font-bold justify-center",
                           shiftColors[shift]
                         )}
-                        variant="default" // Use default variant to apply bg color from class
+                        variant="default"
                       >
                         {shift}
                       </Badge>
@@ -133,7 +139,7 @@ export function RosterCalendar({
           </div>
         </div>
       </div>
-      <Dialog open={!!selectedDate} onOpenChange={() => setSelectedDate(null)}>
+      <Dialog open={!!selectedDate} onOpenChange={handleCloseDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -164,27 +170,21 @@ export function RosterCalendar({
             </div>
             <div>
               <h4 className="font-semibold mb-2">Overtime</h4>
-               <Popover open={isOvertimePopoverOpen} onOpenChange={setOvertimePopoverOpen}>
-                <PopoverTrigger asChild>
-                    <Button variant="outline">Add Overtime</Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-2">
-                    <div className="flex flex-col gap-2">
+                <Button variant="outline" onClick={() => setShowOvertimeOptions(!showOvertimeOptions)}>Add Overtime</Button>
+                {showOvertimeOptions && (
+                    <div className="mt-2 flex flex-col gap-2">
                         {overtimeShifts.map(shift => (
                            <Button
                                 key={shift}
-                                onClick={() => {
-                                  onUpdateDuty(selectedDateString, shift);
-                                  setOvertimePopoverOpen(false);
-                                }}
+                                onClick={() => handleOvertimeButtonClick(shift)}
                                 variant="outline"
+                                className="w-full justify-start"
                             >
                                 {shift}
                             </Button>
                         ))}
                     </div>
-                </PopoverContent>
-               </Popover>
+                )}
             </div>
              <div>
               <h4 className="font-semibold mb-2">Other Shift Types</h4>
