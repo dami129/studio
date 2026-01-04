@@ -47,7 +47,11 @@ export function RosterCalendar({
   const dutiesByDate = React.useMemo(() => {
     const map = new Map<string, ShiftType[]>();
     duties.forEach(duty => {
-      const dutyDate = new Date(duty.date);
+      // Dates from mock data don't have timezone, so they are treated as UTC.
+      // New Date() will create a date in the local timezone.
+      // To compare them correctly, we need to treat them consistently.
+      // By parsing the string and then formatting, we ignore timezone differences for the key.
+      const dutyDate = new Date(duty.date + 'T00:00:00'); // Assume midnight UTC to be safe
       const localDateStr = format(dutyDate, "yyyy-MM-dd");
       if (!map.has(localDateStr)) {
         map.set(localDateStr, []);
@@ -125,6 +129,7 @@ export function RosterCalendar({
                           "text-xs font-bold justify-center",
                           shiftColors[shift]
                         )}
+                        variant="default" // Use default variant to apply bg color from class
                       >
                         {shift}
                       </Badge>
@@ -154,7 +159,9 @@ export function RosterCalendar({
                   <Button
                     key={shift}
                     onClick={() => onUpdateDuty(selectedDateString, shift)}
-                    className={cn(shiftColors[shift], {
+                    variant={shiftsForSelectedDate.includes(shift) ? "default" : "outline"}
+                    className={cn({
+                      [shiftColors[shift]]: shiftsForSelectedDate.includes(shift),
                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                     })}
                   >
@@ -178,8 +185,10 @@ export function RosterCalendar({
                                   onUpdateDuty(selectedDateString, shift);
                                   setOvertimePopoverOpen(false);
                                 }}
-                                className={cn(shiftColors[shift], {
-                                'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
+                                variant={shiftsForSelectedDate.includes(shift) ? "default" : "outline"}
+                                className={cn({
+                                  [shiftColors[shift]]: shiftsForSelectedDate.includes(shift),
+                                  'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                                 })}
                             >
                                 {shift}
@@ -196,7 +205,9 @@ export function RosterCalendar({
                   <Button
                     key={shift}
                     onClick={() => onUpdateDuty(selectedDateString, shift)}
-                    className={cn(shiftColors[shift], {
+                    variant={shiftsForSelectedDate.includes(shift) ? "default" : "outline"}
+                    className={cn({
+                      [shiftColors[shift]]: shiftsForSelectedDate.includes(shift),
                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                     })}
                   >
