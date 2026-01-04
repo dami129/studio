@@ -1,16 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Schedule, ShiftType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { Calendar, Clock } from "lucide-react";
 
 const shiftColors: Record<ShiftType, string> = {
   Morning: "bg-blue-200 text-blue-800",
   Evening: "bg-orange-200 text-orange-800",
   Night: "bg-indigo-200 text-indigo-800",
-  Off: "bg-gray-200 text-gray-800",
+  'Overtime (Morning)': "bg-yellow-300 text-yellow-900",
+  'Overtime (Evening)': "bg-yellow-300 text-yellow-900",
+  'Overtime (Night)': "bg-yellow-300 text-yellow-900",
+  Training: "bg-green-200 text-green-800",
   Leave: "bg-purple-200 text-purple-800",
-  Overtime: "bg-yellow-200 text-yellow-800",
+  Off: "bg-gray-200 text-gray-800",
 };
 
 function ShiftBadge({ type }: { type: ShiftType }) {
@@ -18,7 +21,7 @@ function ShiftBadge({ type }: { type: ShiftType }) {
     <span
       className={cn(
         "px-2 py-1 text-xs font-bold rounded-full",
-        shiftColors[type]
+        shiftColors[type] || "bg-gray-200 text-gray-800"
       )}
     >
       {type}
@@ -26,7 +29,7 @@ function ShiftBadge({ type }: { type: ShiftType }) {
   );
 }
 
-export function DutyCard({ schedule }: { schedule: Schedule }) {
+export function DutyCard({ schedule }: { schedule: Schedule | { next: null; previous: null } }) {
   const { next, previous } = schedule;
   return (
     <Card className="flex flex-col">
@@ -36,37 +39,43 @@ export function DutyCard({ schedule }: { schedule: Schedule }) {
           <span>Duty Schedule</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col flex-grow gap-4">
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            Next Duty
-          </h3>
-          <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
-            <ShiftBadge type={next.type} />
-            <div className="text-right">
-              <p className="font-semibold">{format(new Date(next.date), "EEE, MMM d")}</p>
-              <p className="text-sm text-muted-foreground">
-                {formatDistanceToNow(new Date(next.date), { addSuffix: true })}
-              </p>
+      <CardContent className="flex flex-col flex-grow gap-4 justify-center">
+        {next ? (
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-muted-foreground">
+              Next Duty
+            </h3>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
+              <ShiftBadge type={next.type} />
+              <div className="text-right">
+                <p className="font-semibold">{format(parseISO(next.date), "EEE, MMM d")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDistanceToNow(parseISO(next.date), { addSuffix: true })}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            Previous Duty
-          </h3>
-          <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
-            <ShiftBadge type={previous.type} />
-            <div className="text-right">
-              <p className="font-semibold">
-                {format(new Date(previous.date), "EEE, MMM d")}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {formatDistanceToNow(new Date(previous.date), { addSuffix: true })}
-              </p>
+        ) : (
+          <p className="text-center text-muted-foreground">No upcoming duties scheduled.</p>
+        )}
+        {previous && (
+           <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-muted-foreground">
+              Previous Duty
+            </h3>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
+              <ShiftBadge type={previous.type} />
+              <div className="text-right">
+                <p className="font-semibold">
+                  {format(parseISO(previous.date), "EEE, MMM d")}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDistanceToNow(parseISO(previous.date), { addSuffix: true })}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

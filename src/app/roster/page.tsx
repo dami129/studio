@@ -1,17 +1,15 @@
-
-
 "use client";
 
 import * as React from "react";
 import { RosterCalendar } from "@/components/roster/roster-calendar";
 import { RosterSummary } from "@/components/roster/roster-summary";
-import { mockDuties } from "@/lib/data";
-import type { Duty, ShiftType, ShiftColors } from "@/lib/types";
+import type { ShiftType, ShiftColors } from "@/lib/types";
 import { RosterSettings } from "@/components/roster/roster-settings";
-import { getDaysInMonth, startOfMonth, format, getDay } from "date-fns";
+import { getDaysInMonth, startOfMonth, getDay } from "date-fns";
+import { useDuties } from "@/hooks/use-duties";
 
 export default function RosterPage() {
-  const [duties, setDuties] = React.useState<Duty[]>(mockDuties);
+  const { duties, setDuties } = useDuties();
   const [shiftColors, setShiftColors] = React.useState<ShiftColors>({
     Morning: "bg-blue-200 text-blue-800 hover:bg-blue-200/80",
     Evening: "bg-orange-200 text-orange-800 hover:bg-orange-200/80",
@@ -29,24 +27,20 @@ export default function RosterPage() {
   const handleUpdateDuty = (date: string, type: ShiftType) => {
     setDuties(prevDuties => {
       const isPresent = prevDuties.some(d => d.date === date && d.type === type);
+      let newDuties = [...prevDuties];
 
       if (isPresent) {
-        // If duty exists, remove it
-        return prevDuties.filter(d => !(d.date === date && d.type === type));
+        newDuties = newDuties.filter(d => !(d.date === date && d.type === type));
       } else {
-        // Duty does not exist, so add it
-        let newDuties = [...prevDuties];
         const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
-
         if (isNormalShift) {
-          // If adding a normal shift, first remove any other normal shifts for that day
           const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
           newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
         }
         
         newDuties.push({ date, type });
-        return newDuties;
       }
+      return newDuties;
     });
   };
 
@@ -57,7 +51,7 @@ export default function RosterPage() {
   const month = startOfMonth(currentDate);
   const daysInMonth = getDaysInMonth(month);
   const calendarDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const startDay = getDay(month); // 0 (Sun) - 6 (Sat)
+  const startDay = getDay(month);
   const emptyCells = Array(startDay).fill(undefined);
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -95,5 +89,3 @@ export default function RosterPage() {
     </div>
   );
 }
-
-

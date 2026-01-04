@@ -1,5 +1,3 @@
-
-
 export type ShiftType = 
   | 'Morning' 
   | 'Evening' 
@@ -12,15 +10,15 @@ export type ShiftType =
   | 'Overtime (Night)';
 
 export type Duty = {
-  date: string;
+  date: string; // "yyyy-MM-dd"
   type: ShiftType;
   hospital?: string;
   ward?: string;
 };
 
 export type Schedule = {
-  next: { type: ShiftType; date: string };
-  previous: { type: ShiftType; date: string };
+  next: { type: ShiftType; date: string } | null;
+  previous: { type: ShiftType; date: string } | null;
 };
 
 export type Budget = {

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppShell } from '@/components/layout/app-shell';
+import { DutiesProvider } from '@/hooks/use-duties';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -23,9 +24,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
-        <SidebarProvider>
-          <AppShell>{children}</AppShell>
-        </SidebarProvider>
+        <DutiesProvider>
+          <SidebarProvider>
+            <AppShell>{children}</AppShell>
+          </SidebarProvider>
+        </DutiesProvider>
         <Toaster />
       </body>
     </html>

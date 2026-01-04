@@ -1,11 +1,39 @@
+"use client";
+
+import React from "react";
 import { DutyCard } from "@/components/dashboard/duty-card";
 import { BudgetCard } from "@/components/dashboard/budget-card";
 import { GoalCard } from "@/components/dashboard/goal-card";
 import { QuoteCard } from "@/components/dashboard/quote-card";
 import { Frown } from "lucide-react";
-import React from "react";
+import { useDuties } from "@/hooks/use-duties";
+import { isAfter, isBefore, parseISO, startOfToday } from "date-fns";
+import type { Duty } from "@/lib/types";
+
+function getSchedule(duties: Duty[]) {
+  const today = startOfToday();
+  
+  const upcomingDuties = duties
+    .map(d => ({...d, dateObj: parseISO(d.date)}))
+    .filter(d => isAfter(d.dateObj, today) || d.dateObj.getTime() === today.getTime())
+    .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
+
+  const pastDuties = duties
+    .map(d => ({...d, dateObj: parseISO(d.date)}))
+    .filter(d => isBefore(d.dateObj, today))
+    .sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
+
+  return {
+    next: upcomingDuties.length > 0 ? { type: upcomingDuties[0].type, date: upcomingDuties[0].date } : null,
+    previous: pastDuties.length > 0 ? { type: pastDuties[0].type, date: pastDuties[0].date } : null,
+  };
+}
+
 
 export default function Home() {
+  const { duties } = useDuties();
+  const schedule = getSchedule(duties);
+
   const user = {
     name: "Ayesha Perera",
     hospital: "General Hospital, Colombo",
@@ -14,10 +42,6 @@ export default function Home() {
     budget: {
       income: 120000,
       expenses: 45000,
-    },
-    schedule: {
-      next: { type: "Night", date: "2024-08-15T20:00:00" },
-      previous: { type: "Night", date: "2024-08-14T08:00:00" },
     },
   };
 
@@ -45,7 +69,7 @@ export default function Home() {
         </p>
       </div>
 
-      <DutyCard schedule={user.schedule} />
+      <DutyCard schedule={schedule} />
       <BudgetCard budget={user.budget} />
       <GoalCard goal={user.monthlyGoal} />
       
