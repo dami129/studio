@@ -27,18 +27,18 @@ export default function RosterPage() {
 
   const handleUpdateDuty = (date: string, type: ShiftType) => {
     setDuties(prevDuties => {
-      const dutyIndex = prevDuties.findIndex(d => d.date === date && d.type === type);
       const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
-      
+      const isPresent = prevDuties.some(d => d.date === date && d.type === type);
+
       let newDuties = [...prevDuties];
 
-      if (dutyIndex > -1) {
-        // Duty exists, so remove it
-        newDuties.splice(dutyIndex, 1);
+      if (isPresent) {
+        // If duty exists, remove it
+        newDuties = newDuties.filter(d => !(d.date === date && d.type === type));
       } else {
-        // Duty doesn't exist, so add it
+        // Duty does not exist, so add it
         if (isNormalShift) {
-          // If adding a normal shift, remove any other normal shifts for that day first
+          // If adding a normal shift, first remove any other normal shifts for that day
           const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
           newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
         }

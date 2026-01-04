@@ -74,7 +74,7 @@ export function RosterCalendar({
       <div className="bg-card rounded-lg border shadow-sm">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">{format(month, "MMMM yyyy")}</h2>
+            <h2 className="text-xl font-bold">{month instanceof Date && !isNaN(month.getTime()) ? format(month, "MMMM yyyy") : 'Loading...'}</h2>
             {/* Add month navigation buttons here if needed */}
           </div>
           <div className="grid grid-cols-7 gap-1">
