@@ -10,7 +10,6 @@ const schema = z.object({
   nurseName: z.string(),
   hospital: z.string(),
   ward: z.string(),
-  shiftPreference: z.string(),
   monthlyGoal: z.string(),
   recentActivity: z.string(),
 });

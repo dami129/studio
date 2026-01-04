@@ -7,7 +7,6 @@ export default function ProfilePage() {
         email: "ayesha.p@email.com",
         hospital: "General Hospital, Colombo",
         ward: "Surgical",
-        shiftPreference: "Night",
         monthlyGoal: "Complete my advanced CPR certification.",
         language: "English",
         notifications: {

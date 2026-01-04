@@ -3,13 +3,13 @@ import { BudgetCard } from "@/components/dashboard/budget-card";
 import { GoalCard } from "@/components/dashboard/goal-card";
 import { QuoteCard } from "@/components/dashboard/quote-card";
 import { Frown } from "lucide-react";
+import React from "react";
 
 export default function Home() {
   const user = {
     name: "Ayesha Perera",
     hospital: "General Hospital, Colombo",
     ward: "Surgical",
-    shiftPreference: "Night",
     monthlyGoal: "Complete my advanced CPR certification.",
     budget: {
       income: 120000,

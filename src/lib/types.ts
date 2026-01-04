@@ -21,7 +21,6 @@ export type UserProfile = {
   name: string;
   hospital: string;
   ward: string;
-  shiftPreference: 'Morning' | 'Evening' | 'Night' | 'Any';
   monthlyGoal: string;
 };
 

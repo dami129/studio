@@ -15,9 +15,6 @@ const PersonalizedQuoteInputSchema = z.object({
   nurseName: z.string().describe('The name of the nurse.'),
   hospital: z.string().describe('The hospital where the nurse works.'),
   ward: z.string().describe('The ward/unit where the nurse works.'),
-  shiftPreference: z
-    .string()
-    .describe('The nurse shift preference, e.g., morning, evening, night.'),
   monthlyGoal: z.string().describe('The nurse monthly personal goal.'),
   recentActivity: z
     .string()
@@ -53,7 +50,6 @@ const prompt = ai.definePrompt({
   Nurse Name: {{nurseName}}
   Hospital: {{hospital}}
   Ward/Unit: {{ward}}
-  Shift Preference: {{shiftPreference}}
   Monthly Goal: {{monthlyGoal}}
   Recent Activity/Challenges: {{recentActivity}}
 

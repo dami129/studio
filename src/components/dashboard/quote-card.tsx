@@ -22,7 +22,6 @@ type QuoteCardProps = {
     name: string;
     hospital: string;
     ward: string;
-    shiftPreference: string;
     monthlyGoal: string;
   };
   initialAiState: {
@@ -49,15 +48,6 @@ function SubmitButton() {
 export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardProps) {
   const [state, formAction] = useActionState(generateQuoteAction, initialAiState);
   const [recentActivity, setRecentActivity] = useState("");
-
-  const personalizedInput: PersonalizedQuoteInput = {
-    nurseName: user.name,
-    hospital: user.hospital,
-    ward: user.ward,
-    shiftPreference: user.shiftPreference,
-    monthlyGoal: user.monthlyGoal,
-    recentActivity: recentActivity,
-  };
 
   return (
     <Card>
@@ -91,7 +81,6 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
           <input type="hidden" name="nurseName" value={user.name} />
           <input type="hidden" name="hospital" value={user.hospital} />
           <input type="hidden" name="ward" value={user.ward} />
-          <input type="hidden" name="shiftPreference" value={user.shiftPreference} />
           <input type="hidden" name="monthlyGoal" value={user.monthlyGoal} />
           
           <div className="flex flex-col md:flex-row items-center gap-4">

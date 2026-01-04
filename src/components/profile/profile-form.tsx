@@ -13,7 +13,6 @@ type ProfileFormProps = {
     name: string;
     hospital: string;
     ward: string;
-    shiftPreference: string;
     monthlyGoal: string;
     language: string;
     notifications: {
@@ -44,20 +43,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
           <div className="space-y-2">
             <Label htmlFor="ward">Ward/Unit</Label>
             <Input id="ward" defaultValue={user.ward} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="shift">Shift Preference</Label>
-            <Select defaultValue={user.shiftPreference.toLowerCase()}>
-              <SelectTrigger id="shift">
-                <SelectValue placeholder="Select shift" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="morning">Morning</SelectItem>
-                <SelectItem value="evening">Evening</SelectItem>
-                <SelectItem value="night">Night</SelectItem>
-                <SelectItem value="any">Any</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="goal">Monthly Goal</Label>
