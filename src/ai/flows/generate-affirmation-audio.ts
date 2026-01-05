@@ -7,7 +7,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 import wav from 'wav';
 
 async function toWav(
@@ -78,7 +78,7 @@ const generateAffirmationAudioFlow = ai.defineFlow(
           },
         },
       },
-      prompt: text,
+      prompt: `Please say the following affirmation in a calm, soothing voice. In the background, there should be the gentle sound of birds chirping and a river flowing: "${text}"`,
     });
 
     if (!media?.url) {
