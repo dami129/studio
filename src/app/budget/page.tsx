@@ -3,7 +3,6 @@ import { BudgetSummaryChart } from "@/components/budget/budget-summary-chart";
 import { RecentExpenses } from "@/components/budget/recent-expenses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mockExpenses, mockIncome } from "@/lib/data";
-import { DollarSign } from "lucide-react";
 
 export default function BudgetPage() {
   const totalIncome = mockIncome.reduce((sum, item) => sum + item.amount, 0);
@@ -31,7 +30,7 @@ export default function BudgetPage() {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">LKR</span>
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{formatter.format(totalIncome)}</div>
@@ -40,7 +39,7 @@ export default function BudgetPage() {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">LKR</span>
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{formatter.format(totalExpenses)}</div>
@@ -49,7 +48,7 @@ export default function BudgetPage() {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Remaining</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">LKR</span>
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold text-primary">{formatter.format(remaining)}</div>
