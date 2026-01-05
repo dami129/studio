@@ -28,6 +28,7 @@ const categoryIcons: Record<ExpenseCategory, React.ReactNode> = {
     'Shopping': <Tag className="h-5 w-5 text-muted-foreground" />,
     'Salon': <Tag className="h-5 w-5 text-muted-foreground" />,
     'Card payments': <Tag className="h-5 w-5 text-muted-foreground" />,
+    'Others': <Tag className="h-5 w-5 text-muted-foreground" />,
 };
 
 

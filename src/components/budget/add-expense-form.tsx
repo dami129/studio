@@ -40,6 +40,7 @@ const expenseCategories: ExpenseCategory[] = [
   "Shopping",
   "Salon",
   "Card payments",
+  "Others",
 ]
 
 export function AddExpenseForm() {

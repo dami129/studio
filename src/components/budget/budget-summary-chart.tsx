@@ -57,9 +57,9 @@ const chartConfig = {
     label: "Card Payments",
     color: "hsl(var(--chart-4))",
   },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
+  others: {
+    label: "Others",
+    color: "hsl(var(--muted))",
   },
 }
 
@@ -68,7 +68,7 @@ export function BudgetSummaryChart({ expenses }: { expenses: Expense[] }) {
     const dataMap = new Map<string, number>()
     expenses.forEach(expense => {
       const key = expense.category.toLowerCase().replace(/[^a-z0-9]/g, '')
-      const chartKey = (key in chartConfig) ? key : 'other'
+      const chartKey = (key in chartConfig) ? key : 'others'
       dataMap.set(chartKey, (dataMap.get(chartKey) || 0) + expense.amount)
     })
     return Array.from(dataMap.entries()).map(([name, value]) => ({

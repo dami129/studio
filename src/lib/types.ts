@@ -42,7 +42,8 @@ export type ExpenseCategory =
   | 'Education' 
   | 'Shopping' 
   | 'Salon' 
-  | 'Card payments';
+  | 'Card payments'
+  | 'Others';
 
 export type Expense = {
   id: string;
