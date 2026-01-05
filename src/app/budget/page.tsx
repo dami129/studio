@@ -1,12 +1,16 @@
+"use client";
+
 import { AddExpenseForm } from "@/components/budget/add-expense-form";
 import { BudgetSummaryChart } from "@/components/budget/budget-summary-chart";
 import { RecentExpenses } from "@/components/budget/recent-expenses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockExpenses, mockIncome } from "@/lib/data";
+import { mockIncome } from "@/lib/data";
+import { useExpenses } from "@/hooks/use-expenses";
 
 export default function BudgetPage() {
+  const { expenses } = useExpenses();
   const totalIncome = mockIncome.reduce((sum, item) => sum + item.amount, 0);
-  const totalExpenses = mockExpenses.reduce((sum, item) => sum + item.amount, 0);
+  const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = totalIncome - totalExpenses;
 
   const formatter = new Intl.NumberFormat('en-LK', {
@@ -58,10 +62,10 @@ export default function BudgetPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-            <RecentExpenses expenses={mockExpenses} />
+            <RecentExpenses expenses={expenses} />
         </div>
         <div className="space-y-6">
-            <BudgetSummaryChart expenses={mockExpenses} />
+            <BudgetSummaryChart expenses={expenses} />
             <AddExpenseForm />
         </div>
       </div>
