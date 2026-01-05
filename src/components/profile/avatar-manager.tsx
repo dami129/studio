@@ -15,12 +15,12 @@ import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const predefinedAvatars = [
-  "https://picsum.photos/seed/avatar1/200",
-  "https://picsum.photos/seed/avatar2/200",
-  "https://picsum.photos/seed/avatar3/200",
-  "https://picsum.photos/seed/avatar4/200",
-  "https://picsum.photos/seed/avatar5/200",
-  "https://picsum.photos/seed/avatar6/200",
+  "https://picsum.photos/seed/cartoon1/200",
+  "https://picsum.photos/seed/cartoon2/200",
+  "https://picsum.photos/seed/cartoon3/200",
+  "https://picsum.photos/seed/cartoon4/200",
+  "https://picsum.photos/seed/cartoon5/200",
+  "https://picsum.photos/seed/cartoon6/200",
 ];
 
 type AvatarManagerProps = {
