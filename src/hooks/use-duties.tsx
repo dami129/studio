@@ -12,19 +12,26 @@ type DutiesContextType = {
 const DutiesContext = React.createContext<DutiesContextType | undefined>(undefined);
 
 export function DutiesProvider({ children }: { children: React.ReactNode }) {
-  const [duties, setDuties] = React.useState<Duty[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedDuties = localStorage.getItem('duties');
-      return savedDuties ? JSON.parse(savedDuties) : mockDuties;
-    }
-    return mockDuties;
-  });
+  const [duties, setDuties] = React.useState<Duty[]>(mockDuties);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    try {
+      const savedDuties = localStorage.getItem('duties');
+      if (savedDuties) {
+        setDuties(JSON.parse(savedDuties));
+      }
+    } catch (error) {
+      console.error("Failed to parse duties from localStorage", error);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (isLoaded) {
       localStorage.setItem('duties', JSON.stringify(duties));
     }
-  }, [duties]);
+  }, [duties, isLoaded]);
 
   return (
     <DutiesContext.Provider value={{ duties, setDuties }}>
