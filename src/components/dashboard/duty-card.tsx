@@ -12,8 +12,8 @@ const shiftColors: Record<ShiftType, string> = {
   'Overtime (Evening)': "bg-yellow-300 text-yellow-900",
   'Overtime (Night)': "bg-yellow-300 text-yellow-900",
   Training: "bg-green-200 text-green-800",
-  Leave: "bg-purple-200 text-purple-800",
-  Off: "bg-gray-200 text-gray-800",
+  'Leave (CL/VL/SL)': "bg-purple-200 text-purple-800",
+  'Off (Day Off)': "bg-gray-200 text-gray-800",
 };
 
 function ShiftBadge({ type }: { type: ShiftType }) {

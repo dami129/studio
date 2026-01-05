@@ -22,8 +22,8 @@ export default function RosterPage() {
     'Overtime (Evening)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
     'Overtime (Night)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
     Training: "bg-green-200 text-green-800 hover:bg-green-200/80",
-    Leave: "bg-purple-200 text-purple-800 hover:bg-purple-200/80",
-    Off: "bg-gray-200 text-gray-800 hover:bg-gray-200/80",
+    'Leave (CL/VL/SL)': "bg-purple-200 text-purple-800 hover:bg-purple-200/80",
+    'Off (Day Off)': "bg-gray-200 text-gray-800 hover:bg-gray-200/80",
   });
 
   const [currentDate, setCurrentDate] = React.useState(new Date());
@@ -31,20 +31,25 @@ export default function RosterPage() {
 
   const handleUpdateDuty = (date: string, type: ShiftType) => {
     setDuties(prevDuties => {
-      const isPresent = prevDuties.some(d => d.date === date && d.type === type);
-      if (isPresent) {
-        return prevDuties.filter(d => !(d.date === date && d.type === type));
-      }
+      const dutyExists = prevDuties.some(d => d.date === date && d.type === type);
 
-      const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
-      let newDuties = [...prevDuties];
-      if (isNormalShift) {
-        const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
-        newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
+      if (dutyExists) {
+        // Remove the duty if it already exists
+        return prevDuties.filter(d => !(d.date === date && d.type === type));
+      } else {
+        // Add the new duty
+        let newDuties = [...prevDuties];
+        const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
+
+        if (isNormalShift) {
+          // If adding a normal shift, remove any other normal shifts on the same day
+          const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
+          newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
+        }
+        
+        newDuties.push({ date, type });
+        return newDuties;
       }
-      
-      newDuties.push({ date, type });
-      return newDuties;
     });
   };
 

@@ -19,7 +19,7 @@ import {
 import { Button } from "../ui/button";
 
 const normalShifts: ShiftType[] = ["Morning", "Evening", "Night"];
-const specialShifts: ShiftType[] = ["Training", "Leave", "Off"];
+const specialShifts: ShiftType[] = ["Training", "Leave (CL/VL/SL)", "Off (Day Off)"];
 const overtimeShifts: ShiftType[] = ["Overtime (Morning)", "Overtime (Evening)", "Overtime (Night)"];
 
 

@@ -4,13 +4,13 @@ export const mockDuties: Duty[] = [
   { date: '2024-08-01', type: 'Morning' },
   { date: '2024-08-02', type: 'Morning' },
   { date: '2024-08-03', type: 'Evening' },
-  { date: '2024-08-04', type: 'Off' },
-  { date: '2024-08-05', type: 'Off' },
+  { date: '2024-08-04', type: 'Off (Day Off)' },
+  { date: '2024-08-05', type: 'Off (Day Off)' },
   { date: '2024-08-06', type: 'Night' },
   { date: '2024-08-07', type: 'Night' },
   { date: '2024-08-08', type: 'Morning' },
   { date: '2024-08-09', type: 'Training' },
-  { date: '2024-08-11', type: 'Leave' },
+  { date: '2024-08-11', type: 'Leave (CL/VL/SL)' },
   { date: '2024-08-12', type: 'Evening' },
   { date: '2024-08-13', type: 'Evening' },
   { date: '2024-08-13', type: 'Overtime (Night)' },
@@ -19,8 +19,8 @@ export const mockDuties: Duty[] = [
   { date: '2024-08-18', type: 'Overtime (Morning)' },
   { date: '2024-08-22', type: 'Morning' },
   { date: '2024-08-23', type: 'Morning' },
-  { date: '2024-08-28', type: 'Off' },
-  { date: '2024-08-29', type: 'Off' },
+  { date: '2024-08-28', type: 'Off (Day Off)' },
+  { date: '2024-08-29', type: 'Off (Day Off)' },
 ];
 
 export const mockExpenses: Expense[] = [
