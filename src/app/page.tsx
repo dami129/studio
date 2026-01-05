@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -7,7 +8,9 @@ import { GoalCard } from "@/components/dashboard/goal-card";
 import { QuoteCard } from "@/components/dashboard/quote-card";
 import { Frown } from "lucide-react";
 import { useDuties } from "@/hooks/use-duties";
-import { isAfter, isBefore, parseISO, startOfToday } from "date-fns";
+import { useIncome } from "@/hooks/use-income";
+import { useExpenses } from "@/hooks/use-expenses";
+import { isAfter, isBefore, parseISO, startOfToday, isSameMonth } from "date-fns";
 import type { Duty } from "@/lib/types";
 
 function getSchedule(duties: Duty[]) {
@@ -32,17 +35,25 @@ function getSchedule(duties: Duty[]) {
 
 export default function Home() {
   const { duties } = useDuties();
+  const { totalIncome } = useIncome();
+  const { expenses } = useExpenses();
+  
   const schedule = getSchedule(duties);
+  
+  const currentMonth = new Date();
+  const monthlyExpenses = expenses.filter(expense => isSameMonth(parseISO(expense.date), currentMonth));
+  const totalExpenses = monthlyExpenses.reduce((sum, item) => sum + item.amount, 0);
+
+  const budget = {
+    income: totalIncome,
+    expenses: totalExpenses,
+  };
 
   const user = {
     name: "Ayesha Perera",
     hospital: "General Hospital, Colombo",
     ward: "Surgical",
     monthlyGoal: "Complete my advanced CPR certification.",
-    budget: {
-      income: 120000,
-      expenses: 45000,
-    },
   };
 
   const initialAiState = {
@@ -70,7 +81,7 @@ export default function Home() {
       </div>
 
       <DutyCard schedule={schedule} />
-      <BudgetCard budget={user.budget} />
+      <BudgetCard budget={budget} />
       <GoalCard goal={user.monthlyGoal} />
       
       <div className="md:col-span-2 lg:col-span-3">
