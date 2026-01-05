@@ -23,7 +23,18 @@ const specialShifts: ShiftType[] = ["Training", "Leave", "Off"];
 const overtimeShifts: ShiftType[] = ["Overtime (Morning)", "Overtime (Evening)", "Overtime (Night)"];
 
 
-export function RosterCalendar({
+const RosterCalendar = React.forwardRef<
+  HTMLDivElement,
+  {
+    duties: Duty[];
+    onUpdateDuty: (date: string, type: ShiftType) => void;
+    shiftColors: ShiftColors;
+    month: Date;
+    calendarDays: number[];
+    weekDays: string[];
+    emptyCells: undefined[]
+  }
+>(({
   duties,
   onUpdateDuty,
   shiftColors,
@@ -31,15 +42,7 @@ export function RosterCalendar({
   calendarDays,
   weekDays,
   emptyCells
-}: {
-  duties: Duty[];
-  onUpdateDuty: (date: string, type: ShiftType) => void;
-  shiftColors: ShiftColors;
-  month: Date;
-  calendarDays: number[];
-  weekDays: string[];
-  emptyCells: undefined[]
-}) {
+}, ref) => {
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [showOvertimeOptions, setShowOvertimeOptions] = React.useState(false);
 
@@ -67,17 +70,25 @@ export function RosterCalendar({
     setShowOvertimeOptions(false);
   }
 
-  const selectedDateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
-  const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
-
+  const handleShiftSelection = (type: ShiftType) => {
+    if (selectedDate) {
+      const dateString = format(selectedDate, "yyyy-MM-dd");
+      onUpdateDuty(dateString, type);
+    }
+  }
+  
   const handleOvertimeButtonClick = (shift: ShiftType) => {
-    onUpdateDuty(selectedDateString, shift);
+    handleShiftSelection(shift);
     setShowOvertimeOptions(false);
   }
 
+  const selectedDateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
+  const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
+
+
   return (
     <>
-      <div className="bg-card rounded-lg border shadow-sm">
+      <div ref={ref} className="bg-card rounded-lg border shadow-sm">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">{month instanceof Date && !isNaN(month.getTime()) ? format(month, "MMMM yyyy") : 'Loading...'}</h2>
@@ -156,7 +167,7 @@ export function RosterCalendar({
                 {normalShifts.map(shift => (
                   <Button
                     key={shift}
-                    onClick={() => onUpdateDuty(selectedDateString, shift)}
+                    onClick={() => handleShiftSelection(shift)}
                     variant={shiftsForSelectedDate.includes(shift) ? "default" : "outline"}
                     className={cn({
                       [shiftColors[shift]]: shiftsForSelectedDate.includes(shift),
@@ -192,7 +203,7 @@ export function RosterCalendar({
                 {specialShifts.map(shift => (
                   <Button
                     key={shift}
-                    onClick={() => onUpdateDuty(selectedDateString, shift)}
+                    onClick={() => handleShiftSelection(shift)}
                     variant={shiftsForSelectedDate.includes(shift) ? "default" : "outline"}
                     className={cn({
                       [shiftColors[shift]]: shiftsForSelectedDate.includes(shift),
@@ -209,4 +220,7 @@ export function RosterCalendar({
       </Dialog>
     </>
   );
-}
+});
+
+RosterCalendar.displayName = 'RosterCalendar';
+export { RosterCalendar };

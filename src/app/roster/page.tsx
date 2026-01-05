@@ -7,6 +7,10 @@ import type { ShiftType, ShiftColors } from "@/lib/types";
 import { RosterSettings } from "@/components/roster/roster-settings";
 import { getDaysInMonth, startOfMonth, getDay } from "date-fns";
 import { useDuties } from "@/hooks/use-duties";
+import { Button } from "@/components/ui/button";
+import { Download, Share2 } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default function RosterPage() {
   const { duties, setDuties } = useDuties();
@@ -23,23 +27,23 @@ export default function RosterPage() {
   });
 
   const [currentDate, setCurrentDate] = React.useState(new Date());
+  const calendarRef = React.useRef<HTMLDivElement>(null);
 
   const handleUpdateDuty = (date: string, type: ShiftType) => {
     setDuties(prevDuties => {
       const isPresent = prevDuties.some(d => d.date === date && d.type === type);
-      let newDuties = [...prevDuties];
-
       if (isPresent) {
-        newDuties = newDuties.filter(d => !(d.date === date && d.type === type));
-      } else {
-        const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
-        if (isNormalShift) {
-          const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
-          newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
-        }
-        
-        newDuties.push({ date, type });
+        return prevDuties.filter(d => !(d.date === date && d.type === type));
       }
+
+      const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
+      let newDuties = [...prevDuties];
+      if (isNormalShift) {
+        const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
+        newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
+      }
+      
+      newDuties.push({ date, type });
       return newDuties;
     });
   };
@@ -55,20 +59,69 @@ export default function RosterPage() {
   const emptyCells = Array(startDay).fill(undefined);
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+  const captureCalendar = async () => {
+    if (!calendarRef.current) return null;
+    const canvas = await html2canvas(calendarRef.current);
+    return canvas;
+  };
+
+  const handleExportPdf = async () => {
+    const canvas = await captureCalendar();
+    if (!canvas) return;
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'px',
+      format: [canvas.width, canvas.height]
+    });
+    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+    pdf.save('duty-roster.pdf');
+  };
+
+  const handleShareImage = async () => {
+    const canvas = await captureCalendar();
+    if (!canvas) return;
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'duty-roster.png', { type: 'image/png' })] })) {
+          await navigator.share({
+            files: [new File([blob], 'duty-roster.png', { type: 'image/png' })],
+            title: 'Duty Roster',
+            text: 'Here is my duty roster for the month.'
+          });
+        } else {
+          alert('Sharing is not supported on your browser, or there was an error.');
+        }
+      } catch (error) {
+        console.error('Error sharing:', error);
+        alert('An error occurred while trying to share.');
+      }
+    }, 'image/png');
+  };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground/90">
-          Duty Roster
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Here is your schedule. Click on a date to add or edit a shift.
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground/90">
+            Duty Roster
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Here is your schedule. Click on a date to add or edit a shift.
+          </p>
+        </div>
+        <div className="flex gap-2">
+            <Button variant="outline" onClick={handleExportPdf}><Download className="w-4 h-4 mr-2" /> Export PDF</Button>
+            <Button variant="outline" onClick={handleShareImage}><Share2 className="w-4 h-4 mr-2" /> Share Image</Button>
+        </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           <RosterCalendar
+            ref={calendarRef}
             duties={duties}
             onUpdateDuty={handleUpdateDuty}
             shiftColors={shiftColors}

@@ -3,8 +3,6 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Duty } from "@/lib/types"
-import { Download, Share2 } from "lucide-react"
-import { Button } from "../ui/button"
 import { isSameMonth, parseISO } from "date-fns"
 import React from "react"
 
@@ -64,10 +62,6 @@ export function RosterSummary({ duties, month }: { duties: Duty[], month: Date }
                     </div>
                 ))}
             </CardContent>
-            <CardFooter className="flex flex-col sm:flex-row gap-2">
-                <Button className="w-full" variant="outline"><Download className="w-4 h-4 mr-2" /> Export PDF</Button>
-                <Button className="w-full" variant="outline"><Share2 className="w-4 h-4 mr-2" /> Share Image</Button>
-            </CardFooter>
         </Card>
     )
 }
