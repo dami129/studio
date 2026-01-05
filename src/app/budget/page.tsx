@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AddExpenseForm } from "@/components/budget/add-expense-form";
@@ -7,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useIncome } from "@/hooks/use-income";
 import { IncomeCard } from "@/components/budget/income-card";
-import { isSameMonth, parseISO } from "date-fns";
+import { isSameMonth, parseISO, isToday } from "date-fns";
+import { DailyExpenses } from "@/components/budget/daily-expenses";
 
 export default function BudgetPage() {
   const { expenses } = useExpenses();
@@ -15,6 +17,7 @@ export default function BudgetPage() {
 
   const currentMonth = new Date();
   const monthlyExpenses = expenses.filter(expense => isSameMonth(parseISO(expense.date), currentMonth));
+  const dailyExpenses = expenses.filter(expense => isToday(parseISO(expense.date)));
   
   const totalExpenses = monthlyExpenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = totalIncome - totalExpenses;
@@ -61,6 +64,7 @@ export default function BudgetPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
             <AddExpenseForm />
+            <DailyExpenses expenses={dailyExpenses} />
             <RecentExpenses expenses={monthlyExpenses} />
         </div>
         <div className="space-y-6">
