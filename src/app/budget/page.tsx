@@ -4,12 +4,13 @@ import { AddExpenseForm } from "@/components/budget/add-expense-form";
 import { BudgetSummaryChart } from "@/components/budget/budget-summary-chart";
 import { RecentExpenses } from "@/components/budget/recent-expenses";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockIncome } from "@/lib/data";
 import { useExpenses } from "@/hooks/use-expenses";
+import { useIncome } from "@/hooks/use-income";
+import { IncomeCard } from "@/components/budget/income-card";
 
 export default function BudgetPage() {
   const { expenses } = useExpenses();
-  const totalIncome = mockIncome.reduce((sum, item) => sum + item.amount, 0);
+  const { totalIncome } = useIncome();
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = totalIncome - totalExpenses;
 
@@ -31,15 +32,7 @@ export default function BudgetPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-                <span className="text-sm text-muted-foreground">LKR</span>
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{formatter.format(totalIncome)}</div>
-            </CardContent>
-        </Card>
+        <IncomeCard />
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>

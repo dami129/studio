@@ -33,7 +33,9 @@ export const mockExpenses: Expense[] = [
     { id: '7', date: '2024-08-10', category: 'Shopping', amount: 3000, description: 'New shoes' },
 ];
 
-export const mockIncome: Income[] = [
-    { id: '1', date: '2024-08-01', source: 'Job', amount: 120000 },
-    { id: '2', date: '2024-08-15', source: 'Side income', amount: 15000 },
-]
+export const mockIncome: Income = {
+  jobSalary: 120000,
+  sideIncome: 15000,
+  privatePractice: 0,
+  others: 0,
+};

@@ -6,6 +6,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppShell } from '@/components/layout/app-shell';
 import { DutiesProvider } from '@/hooks/use-duties';
 import { ExpensesProvider } from '@/hooks/use-expenses';
+import { IncomeProvider } from '@/hooks/use-income';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -27,9 +28,11 @@ export default function RootLayout({
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
         <DutiesProvider>
           <ExpensesProvider>
-            <SidebarProvider>
-              <AppShell>{children}</AppShell>
-            </SidebarProvider>
+            <IncomeProvider>
+              <SidebarProvider>
+                <AppShell>{children}</AppShell>
+              </SidebarProvider>
+            </IncomeProvider>
           </ExpensesProvider>
         </DutiesProvider>
         <Toaster />

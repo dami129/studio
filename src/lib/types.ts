@@ -52,14 +52,12 @@ export type Expense = {
   description: string;
 };
 
-export type IncomeSource = 'Job' | 'Side income' | 'Private practice' | 'Others';
+export type IncomeSource = 'jobSalary' | 'sideIncome' | 'privatePractice' | 'others';
 
 export type Income = {
-  id: string;
-  date: string;
-  amount: number;
-  source: IncomeSource;
+  [key in IncomeSource]: number;
 };
+
 
 export type ShiftColors = {
   [key in ShiftType]: string;
