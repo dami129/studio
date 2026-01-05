@@ -7,11 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useIncome } from "@/hooks/use-income";
 import { IncomeCard } from "@/components/budget/income-card";
+import { isSameMonth, parseISO } from "date-fns";
 
 export default function BudgetPage() {
   const { expenses } = useExpenses();
   const { totalIncome } = useIncome();
-  const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
+
+  const currentMonth = new Date();
+  const monthlyExpenses = expenses.filter(expense => isSameMonth(parseISO(expense.date), currentMonth));
+  
+  const totalExpenses = monthlyExpenses.reduce((sum, item) => sum + item.amount, 0);
   const remaining = totalIncome - totalExpenses;
 
   const formatter = new Intl.NumberFormat('en-LK', {
@@ -55,10 +60,10 @@ export default function BudgetPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-            <RecentExpenses expenses={expenses} />
+            <RecentExpenses expenses={monthlyExpenses} />
         </div>
         <div className="space-y-6">
-            <BudgetSummaryChart expenses={expenses} />
+            <BudgetSummaryChart expenses={monthlyExpenses} />
             <AddExpenseForm />
         </div>
       </div>
