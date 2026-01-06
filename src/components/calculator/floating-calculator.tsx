@@ -2,7 +2,7 @@
 "use client";
 import { useState } from "react";
 import Calculator from "./calculator";
-import { Calculator as CalculatorIcon, X } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function FloatingCalculator() {
   const [open, setOpen] = useState(false);
@@ -11,10 +11,11 @@ export default function FloatingCalculator() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-24 right-6 bg-primary text-primary-foreground p-4 rounded-full shadow-lg z-40 transition-transform hover:scale-110"
+        className="fixed top-24 right-6 bg-primary text-primary-foreground p-4 h-14 w-14 flex items-center justify-center text-2xl rounded-full shadow-lg z-40 transition-transform hover:scale-110"
         aria-label="Open Calculator"
+        title="Open Calculator"
       >
-        <CalculatorIcon className="w-6 h-6" />
+        🧮
       </button>
 
       {open && (
