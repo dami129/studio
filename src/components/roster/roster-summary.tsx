@@ -27,7 +27,7 @@ function calculateMonthlySummary(duties: Duty[], currentMonth: Date) {
     d.type.startsWith('Overtime')
   );
 
-  const offDays = monthlyDuties.filter(d => d.type === 'Off');
+  const offDays = monthlyDuties.filter(d => d.type === 'Off (Day Off)');
 
   return {
     totalDuties: normalDuties.length,
