@@ -77,11 +77,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full">
       <Sidebar collapsible="icon">
-        <SidebarHeader className="hidden md:flex items-center gap-2 p-4">
-          <Icons.logo className="w-8 h-8 text-primary" />
+        <SidebarHeader className="hidden md:flex items-center gap-3 p-4">
+          <div className="w-[42px] h-[42px] rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105">
+            <Icons.logo className="w-6 h-6 text-primary" />
+          </div>
           <div className="flex flex-col">
-            <h2 className="font-headline text-lg font-bold">NurseCare</h2>
-            <p className="text-xs text-muted-foreground">Sri Lanka</p>
+            <h3 className="m-0 text-[15px] font-semibold text-gray-800">NurseCare</h3>
+            <span className="text-xs text-gray-500">Sri Lanka</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
