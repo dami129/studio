@@ -87,11 +87,7 @@ const RosterCalendar = React.forwardRef<
   const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
 
   const getTranslationKey = (shift: ShiftType): string => {
-    const key = `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-    if (shift.startsWith('Overtime')) {
-        return `${key}_short`;
-    }
-    return key;
+    return `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
   }
   
   const getBadgeTranslationKey = (shift: ShiftType): string => {
