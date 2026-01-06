@@ -40,7 +40,6 @@ export function Combobox({
   className,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
-  const [searchValue, setSearchValue] = React.useState("")
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -52,7 +51,7 @@ export function Combobox({
           className={cn("w-full justify-between", className)}
         >
           {value
-            ? items.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label
+            ? items.find((item) => item.value === value)?.label
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -61,8 +60,6 @@ export function Combobox({
         <Command>
           <CommandInput 
             placeholder={searchPlaceholder} 
-            value={searchValue}
-            onValueChange={setSearchValue}
           />
           <CommandList>
             <CommandEmpty>{noResultsMessage}</CommandEmpty>
@@ -82,7 +79,7 @@ export function Combobox({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.toLowerCase() === item.value.toLowerCase() ? "opacity-100" : "opacity-0"
+                      value === item.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {item.label}
