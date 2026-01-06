@@ -103,10 +103,6 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="monthlyGoal">Monthly Goal</Label>
-            <Textarea id="monthlyGoal" value={formData.monthlyGoal} onChange={handleChange} />
-          </div>
         </CardContent>
       </Card>
 
