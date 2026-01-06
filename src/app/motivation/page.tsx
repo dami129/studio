@@ -1,6 +1,7 @@
 import { AffirmationsPlayer } from "@/components/motivation/affirmations-player";
+import NurseSunriseCard from "@/components/motivation/nurse-sunrise-card";
 import { SelfCareCards } from "@/components/motivation/self-care-cards";
-import { LanguageSwitcher } from "@/components/language-switcher";
+
 
 export default function MotivationPage() {
   return (
@@ -13,7 +14,8 @@ export default function MotivationPage() {
             A quiet space for self-care and encouragement.
         </p>
       </div>
-
+      
+      <NurseSunriseCard />
       <SelfCareCards />
       <AffirmationsPlayer />
     </div>
