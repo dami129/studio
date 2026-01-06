@@ -12,6 +12,7 @@ import { Download, Share2 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useLanguage } from "@/hooks/use-language";
+import FloatingCalculator from "@/components/calculator/floating-calculator";
 
 export default function RosterPage() {
   const { t } = useLanguage();
@@ -146,6 +147,7 @@ export default function RosterPage() {
           />
         </div>
       </div>
+      <FloatingCalculator />
     </div>
   );
 }

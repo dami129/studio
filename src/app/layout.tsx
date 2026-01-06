@@ -9,7 +9,6 @@ import { ExpensesProvider } from '@/hooks/use-expenses';
 import { IncomeProvider } from '@/hooks/use-income';
 import { ProfileProvider } from '@/hooks/use-profile';
 import { LanguageProvider } from '@/hooks/use-language';
-import FloatingCalculator from '@/components/calculator/floating-calculator';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -38,7 +37,6 @@ export default function RootLayout({
                 <IncomeProvider>
                   <SidebarProvider>
                     <AppShell>{children}</AppShell>
-                    <FloatingCalculator />
                   </SidebarProvider>
                 </IncomeProvider>
               </ExpensesProvider>
