@@ -31,6 +31,20 @@ type ProfileFormProps = {
   onSave: (user: User) => void;
 };
 
+const wards = [
+  "Surgical", 
+  "Medical", 
+  "ETU/A&E", 
+  "ICU", 
+  "GYN/OBS", 
+  "Pediatric", 
+  "Theatre", 
+  "Blood Bank", 
+  "Orthopaedic", 
+  "Cardiology", 
+  "Cardiothoracic"
+];
+
 export function ProfileForm({ user, onSave }: ProfileFormProps) {
   const [formData, setFormData] = React.useState(user);
 
@@ -49,6 +63,10 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
 
   const handleHospitalChange = (value: string) => {
     setFormData(prev => ({ ...prev, hospital: value }));
+  };
+
+  const handleWardChange = (value: string) => {
+    setFormData(prev => ({ ...prev, ward: value }));
   };
 
   const handleSwitchChange = (id: keyof User['notifications']) => {
@@ -95,7 +113,16 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="ward">Ward/Unit</Label>
-            <Input id="ward" value={formData.ward} onChange={handleChange} />
+             <Select value={formData.ward} onValueChange={handleWardChange}>
+              <SelectTrigger id="ward">
+                <SelectValue placeholder="Select a ward/unit" />
+              </SelectTrigger>
+              <SelectContent>
+                {wards.map((ward) => (
+                  <SelectItem key={ward} value={ward}>{ward}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="monthlyGoal">Monthly Goal</Label>
