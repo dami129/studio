@@ -1,9 +1,7 @@
 
 "use client";
 
-import { useState, useActionState } from "react";
-import { useFormStatus } from "react-dom";
-import { generateQuoteAction } from "@/app/actions/generate-quote";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,45 +11,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Bot, Loader2 } from "lucide-react";
-import { PersonalizedQuoteInput } from "@/ai/flows/personalized-motivational-quotes";
+import { Sparkles, Bot } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import React from "react";
 import { useLanguage } from "@/hooks/use-language";
 
-type QuoteCardProps = {
-  user: {
-    name: string;
-    hospital: string;
-    ward: string;
-    monthlyGoal: string;
-  };
-  initialAiState: {
-    quote: string | null;
-    error: string | null;
-  };
-  recentActivities: { value: string; label: string, icon: React.ReactNode }[];
+const QUOTES: Record<string, string[]> = {
+  teamwork: [
+    "Great teamwork turns long shifts into shared victories.",
+    "Together, nurses achieve more than any one alone.",
+    "Strong teams save lives — including each other."
+  ],
+  tired: [
+    "Your strength shows even on the hardest days.",
+    "Rest when you can — your care matters.",
+    "Even quiet resilience makes a difference."
+  ],
+  stressed: [
+    "Take one breath at a time — you are doing your best.",
+    "Pressure builds diamonds — and strong nurses.",
+    "You are stronger than this moment."
+  ]
 };
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  const { t } = useLanguage();
-  return (
-    <Button type="submit" disabled={pending} className="w-full md:w-auto">
-      {pending ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      ) : (
-        <Sparkles className="mr-2 h-4 w-4" />
-      )}
-      {t('generate_my_quote')}
-    </Button>
-  );
-}
+type QuoteCardProps = {
+  feelingOptions: { value: string; label: string, icon: React.ReactNode }[];
+};
 
-export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardProps) {
+export function QuoteCard({ feelingOptions }: QuoteCardProps) {
   const { t } = useLanguage();
-  const [state, formAction] = useActionState(generateQuoteAction, initialAiState);
-  const [recentActivity, setRecentActivity] = useState("");
+  const [feeling, setFeeling] = useState("teamwork");
+  const [quote, setQuote] = useState("");
+  const [error, setError] = useState("");
+
+  const handleGenerateQuote = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!feeling || !QUOTES[feeling]) {
+      setError(t('quote_error_feeling'));
+      return;
+    }
+
+    const quotesForFeeling = QUOTES[feeling];
+    const randomIndex = Math.floor(Math.random() * quotesForFeeling.length);
+    setQuote(quotesForFeeling[randomIndex]);
+  };
 
   return (
     <Card>
@@ -62,10 +66,10 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {state.quote ? (
+        {quote ? (
           <div className="text-center p-6 bg-accent/50 rounded-lg">
             <p className="text-lg md:text-xl font-semibold text-accent-foreground/90">
-              "{state.quote}"
+              "{quote}"
             </p>
           </div>
         ) : (
@@ -74,38 +78,36 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
           </p>
         )}
 
-        {state.error && (
+        {error && (
             <Alert variant="destructive">
                 <AlertTitle>{t('error')}</AlertTitle>
-                <AlertDescription>{state.error}</AlertDescription>
+                <AlertDescription>{error}</AlertDescription>
             </Alert>
         )}
 
-        <form action={formAction} className="space-y-4">
-          <input type="hidden" name="nurseName" value={user.name} />
-          <input type="hidden" name="hospital" value={user.hospital} />
-          <input type="hidden" name="ward" value={user.ward} />
-          <input type="hidden" name="monthlyGoal" value={user.monthlyGoal} />
-          
+        <form onSubmit={handleGenerateQuote} className="space-y-4">
           <div className="flex flex-col md:flex-row items-center gap-4">
             <div className="w-full md:flex-1">
-              <Select name="recentActivity" onValueChange={setRecentActivity} required>
+              <Select name="recentActivity" onValueChange={setFeeling} value={feeling} required>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('recent_shift_placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {recentActivities.map((activity) => (
-                    <SelectItem key={activity.value} value={activity.value}>
+                  {feelingOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
                        <div className="flex items-center">
-                        {activity.icon}
-                        {activity.label}
+                        {option.icon}
+                        {option.label}
                       </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <SubmitButton />
+            <Button type="submit" className="w-full md:w-auto">
+              <Sparkles className="mr-2 h-4 w-4" />
+              {t('generate_my_quote')}
+            </Button>
           </div>
         </form>
       </CardContent>

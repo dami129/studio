@@ -68,17 +68,10 @@ export default function Home() {
     expenses: totalExpenses,
   };
 
-  const initialAiState = {
-    quote: null,
-    error: null,
-  };
-
-  const recentActivities = [
-    { value: 'long-shift', label: t('activity_long_shift'), icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'difficult-patient', label: t('activity_difficult_patient'), icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'unmotivated', label: t('activity_unmotivated'), icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'great-teamwork', label: t('activity_great_teamwork'), icon: <Smile className="w-4 h-4 mr-2" /> },
-    { value: 'patient-recovery', label: t('activity_patient_recovery'), icon: <Heart className="w-4 h-4 mr-2" /> },
+  const feelingOptions = [
+    { value: 'teamwork', label: t('feeling_teamwork'), icon: <Users className="w-4 h-4 mr-2" /> },
+    { value: 'tired', label: t('feeling_tired'), icon: <Frown className="w-4 h-4 mr-2" /> },
+    { value: 'stressed', label: t('feeling_stressed'), icon: <Smile className="w-4 h-4 mr-2" /> },
   ];
 
   return (
@@ -98,9 +91,7 @@ export default function Home() {
       
       <div className="md:col-span-2 lg:col-span-3">
         <QuoteCard 
-          user={user}
-          initialAiState={initialAiState}
-          recentActivities={recentActivities}
+          feelingOptions={feelingOptions}
         />
       </div>
     </div>
