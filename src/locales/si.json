@@ -1,3 +1,4 @@
+
 {
   "nav_dashboard": "මුල් පිටුව",
   "nav_roster": "රාජකාරි ලේඛනය",
@@ -112,8 +113,8 @@
   "shift_morning": "උදෑසන",
   "shift_evening": "සවස",
   "shift_night": "රාත්‍රී",
-  "shift_off_day_off": "නිවාඩු (නිවාඩු දිනය)",
-  "shift_leave_cl_vl_sl": "නිවාඩු (CL/VL/SL)",
+  "shift_off_day_off": "නිවාඩු දිනය",
+  "shift_leave_cl_vl_sl": "අනියම් නිවාඩු",
   "shift_training": "පුහුණුව",
   "shift_overtime_morning": "අතිකාල (උදෑසන)",
   "shift_overtime_evening": "අතිකාල (සවස)",
