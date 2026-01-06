@@ -7,22 +7,25 @@ import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import * as React from "react";
 import { AvatarManager } from "@/components/profile/avatar-manager";
+import { useToast } from "@/hooks/use-toast";
+
+const initialUser = {
+    name: "Ayesha Perera",
+    email: "ayesha.p@email.com",
+    hospital: "General Hospital, Colombo",
+    ward: "Surgical",
+    monthlyGoal: "Complete my advanced CPR certification.",
+    language: "English",
+    notifications: {
+        dutyReminders: true,
+        budgetAlerts: true,
+        dailyMotivation: false,
+    }
+};
 
 export default function ProfilePage() {
-    const [user, setUser] = React.useState({
-        name: "Ayesha Perera",
-        email: "ayesha.p@email.com",
-        hospital: "General Hospital, Colombo",
-        ward: "Surgical",
-        monthlyGoal: "Complete my advanced CPR certification.",
-        language: "English",
-        notifications: {
-            dutyReminders: true,
-            budgetAlerts: true,
-            dailyMotivation: false,
-        }
-    });
-
+    const { toast } = useToast();
+    const [user, setUser] = React.useState(initialUser);
     const [avatar, setAvatar] = React.useState("https://picsum.photos/seed/nurse/200");
     const [isAvatarManagerOpen, setIsAvatarManagerOpen] = React.useState(false);
 
@@ -31,14 +34,34 @@ export default function ProfilePage() {
         if (savedAvatar) {
             setAvatar(savedAvatar);
         }
+        const savedUser = localStorage.getItem('user-profile');
+        if (savedUser) {
+            try {
+                setUser(JSON.parse(savedUser));
+            } catch (e) {
+                console.error("Failed to parse user profile from localStorage", e);
+            }
+        }
     }, []);
 
     const handleAvatarChange = (newAvatar: string) => {
         setAvatar(newAvatar);
         localStorage.setItem('user-avatar', newAvatar);
         setIsAvatarManagerOpen(false);
+         toast({
+            title: "Avatar Updated",
+            description: "Your new profile photo has been saved.",
+        });
     };
 
+    const handleProfileSave = (updatedUser: typeof user) => {
+        setUser(updatedUser);
+        localStorage.setItem('user-profile', JSON.stringify(updatedUser));
+        toast({
+            title: "Profile Saved",
+            description: "Your changes have been saved successfully.",
+        });
+    }
 
     return (
         <div className="space-y-6">
@@ -72,7 +95,7 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            <ProfileForm user={user} />
+            <ProfileForm user={user} onSave={handleProfileSave} />
 
             <AvatarManager 
                 isOpen={isAvatarManagerOpen}

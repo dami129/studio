@@ -1,5 +1,7 @@
+
 "use client"
 
+import * as React from "react";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,24 +10,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 
-type ProfileFormProps = {
-  user: {
-    name: string;
-    hospital: string;
-    ward: string;
-    monthlyGoal: string;
-    language: string;
-    notifications: {
-      dutyReminders: boolean;
-      budgetAlerts: boolean;
-      dailyMotivation: boolean;
-    };
+type User = {
+  name: string;
+  hospital: string;
+  ward: string;
+  monthlyGoal: string;
+  language: string;
+  notifications: {
+    dutyReminders: boolean;
+    budgetAlerts: boolean;
+    dailyMotivation: boolean;
   };
 };
 
-export function ProfileForm({ user }: ProfileFormProps) {
+type ProfileFormProps = {
+  user: User;
+  onSave: (user: User) => void;
+};
+
+export function ProfileForm({ user, onSave }: ProfileFormProps) {
+  const [formData, setFormData] = React.useState(user);
+
+  React.useEffect(() => {
+    setFormData(user);
+  }, [user]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+  
+  const handleSelectChange = (value: string) => {
+    setFormData(prev => ({ ...prev, language: value }));
+  };
+
+  const handleSwitchChange = (id: keyof User['notifications']) => {
+    setFormData(prev => ({
+      ...prev,
+      notifications: {
+        ...prev.notifications,
+        [id]: !prev.notifications[id],
+      }
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
   return (
-    <form className="space-y-8">
+    <form className="space-y-8" onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
           <CardTitle>Personal Information</CardTitle>
@@ -34,19 +69,19 @@ export function ProfileForm({ user }: ProfileFormProps) {
         <CardContent className="grid gap-6 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">Full Name</Label>
-            <Input id="name" defaultValue={user.name} />
+            <Input id="name" value={formData.name} onChange={handleChange} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="hospital">Hospital</Label>
-            <Input id="hospital" defaultValue={user.hospital} />
+            <Input id="hospital" value={formData.hospital} onChange={handleChange} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="ward">Ward/Unit</Label>
-            <Input id="ward" defaultValue={user.ward} />
+            <Input id="ward" value={formData.ward} onChange={handleChange} />
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="goal">Monthly Goal</Label>
-            <Textarea id="goal" defaultValue={user.monthlyGoal} />
+            <Textarea id="monthlyGoal" value={formData.monthlyGoal} onChange={handleChange} />
           </div>
         </CardContent>
       </Card>
@@ -61,22 +96,22 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 <Label>Notifications</Label>
                 <div className="space-y-3 rounded-lg border p-4">
                     <div className="flex items-center justify-between">
-                        <Label htmlFor="duty-reminders" className="font-normal">Duty Reminders</Label>
-                        <Switch id="duty-reminders" defaultChecked={user.notifications.dutyReminders} />
+                        <Label htmlFor="dutyReminders" className="font-normal">Duty Reminders</Label>
+                        <Switch id="dutyReminders" checked={formData.notifications.dutyReminders} onCheckedChange={() => handleSwitchChange('dutyReminders')} />
                     </div>
                     <div className="flex items-center justify-between">
-                        <Label htmlFor="budget-alerts" className="font-normal">Budget Alerts</Label>
-                        <Switch id="budget-alerts" defaultChecked={user.notifications.budgetAlerts} />
+                        <Label htmlFor="budgetAlerts" className="font-normal">Budget Alerts</Label>
+                        <Switch id="budgetAlerts" checked={formData.notifications.budgetAlerts} onCheckedChange={() => handleSwitchChange('budgetAlerts')} />
                     </div>
                     <div className="flex items-center justify-between">
-                        <Label htmlFor="daily-motivation" className="font-normal">Daily Motivation</Label>
-                        <Switch id="daily-motivation" defaultChecked={user.notifications.dailyMotivation} />
+                        <Label htmlFor="dailyMotivation" className="font-normal">Daily Motivation</Label>
+                        <Switch id="dailyMotivation" checked={formData.notifications.dailyMotivation} onCheckedChange={() => handleSwitchChange('dailyMotivation')} />
                     </div>
                 </div>
             </div>
             <div className="space-y-2">
             <Label htmlFor="language">Language</Label>
-            <Select defaultValue={user.language.toLowerCase()}>
+            <Select value={formData.language.toLowerCase()} onValueChange={handleSelectChange}>
               <SelectTrigger id="language">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
@@ -91,7 +126,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       </Card>
       
       <div className="flex justify-end">
-        <Button>Save Changes</Button>
+        <Button type="submit">Save Changes</Button>
       </div>
     </form>
   )
