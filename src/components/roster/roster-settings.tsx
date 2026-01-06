@@ -37,7 +37,7 @@ export function RosterSettings({ shiftColors, onColorChange }: { shiftColors: Sh
             <CardContent className="space-y-4">
                 {shiftTypes.map(shiftType => (
                     <div key={shiftType} className="flex items-center justify-between">
-                        <Label>{t(`shift_${shiftType.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}</Label>
+                        <Label>{t(`shift_${shiftType}`)}</Label>
                         <Select
                             value={shiftColors[shiftType]}
                             onValueChange={(value) => onColorChange(shiftType, value)}

@@ -48,7 +48,6 @@ const RosterCalendar = React.forwardRef<
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [showOvertimeOptions, setShowOvertimeOptions] = React.useState(false);
 
-
   const dutiesByDate = React.useMemo(() => {
     const map = new Map<string, ShiftType[]>();
     duties.forEach(duty => {
@@ -85,11 +84,9 @@ const RosterCalendar = React.forwardRef<
 
   const selectedDateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
   const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
-
-  const getTranslationKey = (shift: ShiftType): string => {
-    return `shift_${shift.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_`;
-  }
   
+  const getShiftLabel = (shift: ShiftType) => t(`shift_${shift}`);
+
   return (
     <>
       <div ref={ref} className="bg-card rounded-lg border shadow-sm">
@@ -144,7 +141,7 @@ const RosterCalendar = React.forwardRef<
                         )}
                         variant="default"
                       >
-                        {t(getTranslationKey(shift))}
+                        {getShiftLabel(shift)}
                       </Badge>
                     ))}
                   </div>
@@ -178,7 +175,7 @@ const RosterCalendar = React.forwardRef<
                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                     })}
                   >
-                    {t(getTranslationKey(shift))}
+                    {getShiftLabel(shift)}
                   </Button>
                 ))}
               </div>
@@ -200,7 +197,7 @@ const RosterCalendar = React.forwardRef<
                                     : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                                 )}
                             >
-                                {t(getTranslationKey(shift))}
+                                {getShiftLabel(shift)}
                             </button>
                           )
                         })}
@@ -220,7 +217,7 @@ const RosterCalendar = React.forwardRef<
                        'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift),
                     })}
                   >
-                    {t(getTranslationKey(shift))}
+                    {getShiftLabel(shift)}
                   </Button>
                 ))}
               </div>

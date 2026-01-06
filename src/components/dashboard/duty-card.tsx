@@ -20,9 +20,6 @@ const shiftColors: Record<ShiftType, string> = {
 
 function ShiftBadge({ type }: { type: ShiftType }) {
   const { t } = useLanguage();
-  const getTranslationKey = (shift: ShiftType): string => {
-    return `shift_${shift.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_`;
-  }
   return (
     <span
       className={cn(
@@ -30,7 +27,7 @@ function ShiftBadge({ type }: { type: ShiftType }) {
         shiftColors[type] || "bg-gray-200 text-gray-800"
       )}
     >
-      {t(getTranslationKey(type))}
+      {t(`shift_${type}`)}
     </span>
   );
 }
