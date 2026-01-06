@@ -87,16 +87,16 @@ const RosterCalendar = React.forwardRef<
   const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
 
   const getTranslationKey = (shift: ShiftType): string => {
-    if (shift === 'Leave (CL/VL/SL)') return 'shift_casual_leave';
-    if (shift === 'Off (Day Off)') return 'shift_day_off';
-
-    const key = shift.toLowerCase().replace(/[^a-z0-9]/g, '_');
-    
+    const key = `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
     if (shift.startsWith('Overtime')) {
-        return `shift_${key}_short`;
+        return `${key}_short`;
     }
-
-    return `shift_${key}`;
+    return key;
+  }
+  
+  const getBadgeTranslationKey = (shift: ShiftType): string => {
+     const key = `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+     return key;
   }
 
 
@@ -154,7 +154,7 @@ const RosterCalendar = React.forwardRef<
                         )}
                         variant="default"
                       >
-                        {t(getTranslationKey(shift))}
+                        {t(getBadgeTranslationKey(shift))}
                       </Badge>
                     ))}
                   </div>
