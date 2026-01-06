@@ -7,7 +7,7 @@ const initialUser: UserProfile = {
     name: "Ayesha Perera",
     email: "ayesha.p@email.com",
     hospital: "General Hospital, Colombo",
-    ward: "Surgical",
+    ward: "Surgical Ward",
     monthlyGoal: "Complete my advanced CPR certification.",
     language: "English",
     theme: "light",
@@ -32,15 +32,14 @@ const ProfileContext = React.createContext<ProfileContextType | undefined>(undef
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<UserProfile>(initialUser);
   const [avatar, setAvatar] = React.useState<string>(initialAvatar);
-  const [isLoaded, setIsLoaded] = React.useState(false);
 
+  // Load from localStorage only once on mount
   React.useEffect(() => {
     try {
       const savedUser = localStorage.getItem('user-profile');
       if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
-        // Merge with initial user to ensure all keys are present
-        setUser({ ...initialUser, ...parsedUser });
+        setUser(prevUser => ({ ...prevUser, ...parsedUser }));
       }
       const savedAvatar = localStorage.getItem('user-avatar');
       if (savedAvatar) {
@@ -49,26 +48,34 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Failed to parse data from localStorage", error);
     }
-    setIsLoaded(true);
   }, []);
 
-  const updateUser = (newUserData: Partial<UserProfile>) => {
-    const updatedUser = { ...user, ...newUserData };
-    setUser(updatedUser);
-    if (isLoaded) {
-      localStorage.setItem('user-profile', JSON.stringify(updatedUser));
-    }
-  };
+  const updateUser = React.useCallback((newUserData: Partial<UserProfile>) => {
+    setUser(currentUser => {
+      const updatedUser = { ...currentUser, ...newUserData };
+      try {
+        localStorage.setItem('user-profile', JSON.stringify(updatedUser));
+      } catch (error) {
+        console.error("Failed to save user profile to localStorage", error);
+      }
+      return updatedUser;
+    });
+  }, []);
 
-  const updateAvatar = (newAvatar: string) => {
+
+  const updateAvatar = React.useCallback((newAvatar: string) => {
     setAvatar(newAvatar);
-    if (isLoaded) {
+    try {
       localStorage.setItem('user-avatar', newAvatar);
+    } catch (error) {
+      console.error("Failed to save avatar to localStorage", error);
     }
-  };
+  }, []);
+
+  const value = React.useMemo(() => ({ user, updateUser, avatar, updateAvatar }), [user, updateUser, avatar, updateAvatar]);
 
   return (
-    <ProfileContext.Provider value={{ user, updateUser, avatar, updateAvatar }}>
+    <ProfileContext.Provider value={value}>
       {children}
     </ProfileContext.Provider>
   );
