@@ -97,30 +97,33 @@ export default function Home() {
   const schedule = getSchedule(duties);
 
   React.useEffect(() => {
-    if (user.notifications.dailyMotivation) {
-      const timer = setTimeout(() => {
-        toast({
-          title: t('daily_motivation_title'),
-          description: t('daily_motivation_desc'),
-        });
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [user.notifications.dailyMotivation, toast, t]);
-
-  React.useEffect(() => {
-    if (user.notifications.dutyReminders && schedule.next) {
-      const nextDutyDate = parseISO(schedule.next.date);
-      const message = `Your next duty is a ${t(`shift_${schedule.next.type}`)} shift on ${format(nextDutyDate, "EEE, MMM d")} (${formatDistanceToNow(nextDutyDate, { addSuffix: true })}).`;
-      const timer = setTimeout(() => {
+    let notificationSent = false;
+    const dutyReminderTimer = setTimeout(() => {
+      if (user.notifications.dutyReminders && schedule.next) {
+        const nextDutyDate = parseISO(schedule.next.date);
+        const message = `Your next duty is a ${t(`shift_${schedule.next.type}`)} shift on ${format(nextDutyDate, "EEE, MMM d")} (${formatDistanceToNow(nextDutyDate, { addSuffix: true })}).`;
         toast({
           title: "Upcoming Duty Reminder",
           description: message,
         });
-      }, 1500); // Delay slightly longer than motivation toast
-      return () => clearTimeout(timer);
+        notificationSent = true;
+      }
+    }, 1000);
+
+    const motivationTimer = setTimeout(() => {
+        if (!notificationSent && user.notifications.dailyMotivation) {
+            toast({
+              title: t('daily_motivation_title'),
+              description: t('daily_motivation_desc'),
+            });
+        }
+    }, 1500); // Delay this slightly to ensure duty reminder has priority
+
+    return () => {
+        clearTimeout(dutyReminderTimer);
+        clearTimeout(motivationTimer);
     }
-  }, [user.notifications.dutyReminders, schedule.next, toast, t]);
+  }, [user.notifications.dutyReminders, user.notifications.dailyMotivation, schedule.next, toast, t]);
   
   
   const currentMonth = new Date();
