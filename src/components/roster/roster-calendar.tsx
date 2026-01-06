@@ -90,12 +90,6 @@ const RosterCalendar = React.forwardRef<
     return `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
   }
   
-  const getBadgeTranslationKey = (shift: ShiftType): string => {
-     const key = `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-     return key;
-  }
-
-
   return (
     <>
       <div ref={ref} className="bg-card rounded-lg border shadow-sm">
@@ -150,7 +144,7 @@ const RosterCalendar = React.forwardRef<
                         )}
                         variant="default"
                       >
-                        {t(getBadgeTranslationKey(shift))}
+                        {t(getTranslationKey(shift))}
                       </Badge>
                     ))}
                   </div>
@@ -194,19 +188,22 @@ const RosterCalendar = React.forwardRef<
                 <Button variant="outline" onClick={() => setShowOvertimeOptions(!showOvertimeOptions)}>{t('add_overtime')}</Button>
                 {showOvertimeOptions && (
                     <div className="mt-2 flex flex-col gap-2">
-                        {overtimeShifts.map(shift => (
+                        {overtimeShifts.map(shift => {
+                          const isSelected = shiftsForSelectedDate.includes(shift);
+                          return (
                            <button
                                 key={shift}
                                 onClick={() => handleOvertimeButtonClick(shift)}
                                 className={cn(`w-full text-left px-4 py-3 rounded-xl border transition`,
-                                    shiftsForSelectedDate.includes(shift)
-                                    ? "bg-blue-100 border-blue-400 text-blue-700"
-                                    : "bg-white border-gray-300 text-gray-700"
+                                    isSelected
+                                    ? "bg-blue-100 border-blue-500 text-blue-700"
+                                    : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                                 )}
                             >
                                 {t(getTranslationKey(shift))}
                             </button>
-                        ))}
+                          )
+                        })}
                     </div>
                 )}
             </div>
@@ -220,8 +217,7 @@ const RosterCalendar = React.forwardRef<
                     variant={shiftsForSelectedDate.includes(shift) ? "default" : "outline"}
                     className={cn({
                       [shiftColors[shift]]: shiftsForSelectedDate.includes(shift),
-                       'bg-purple-100 border-purple-400 text-purple-700': shiftsForSelectedDate.includes(shift) && shift.startsWith('Leave'),
-                       'bg-gray-100 border-gray-400 text-gray-700': shiftsForSelectedDate.includes(shift) && shift.startsWith('Off'),
+                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift),
                     })}
                   >
                     {t(getTranslationKey(shift))}
