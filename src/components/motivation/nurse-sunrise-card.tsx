@@ -53,18 +53,21 @@ function getTimeGradient() {
   };
 }
 
+const initialTheme = {
+    bg: "from-sky-300 via-blue-200 to-white",
+    sun: "bg-orange-400",
+    text: "A New Day Begins",
+    textColor: "text-slate-800",
+    subtitleColor: "text-slate-600",
+    iconFill: "rgba(51, 65, 85, 0.25)"
+};
+
 export default function NurseSunriseCard() {
-  const [theme, setTheme] = useState({
-      bg: "from-sky-300 via-blue-200 to-white",
-      sun: "bg-orange-400",
-      text: "A New Day Begins",
-      textColor: "text-slate-800",
-      subtitleColor: "text-slate-600",
-      iconFill: "rgba(51, 65, 85, 0.25)"
-  });
+  const [theme, setTheme] = useState(initialTheme);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Set initial theme without waiting for hydration
+    setIsClient(true);
     setTheme(getTimeGradient());
 
     const interval = setInterval(() => {
@@ -74,17 +77,19 @@ export default function NurseSunriseCard() {
     return () => clearInterval(interval);
   }, []);
 
+  const currentTheme = isClient ? theme : initialTheme;
+
   return (
     <div
       className={`relative h-52 overflow-hidden rounded-2xl 
-      bg-gradient-to-br ${theme.bg} p-6 shadow-md transition-all duration-1000 ease-in-out`}
+      bg-gradient-to-br ${currentTheme.bg} p-6 shadow-md transition-all duration-1000 ease-in-out`}
     >
       {/* Text */}
       <div className="relative z-10 max-w-sm">
-        <h2 className={`text-xl font-bold ${theme.textColor} transition-colors duration-1000`}>
-          {theme.text}
+        <h2 className={`text-xl font-bold ${currentTheme.textColor} transition-colors duration-1000`}>
+          {currentTheme.text}
         </h2>
-        <p className={`mt-1 text-sm ${theme.subtitleColor} transition-colors duration-1000`}>
+        <p className={`mt-1 text-sm ${currentTheme.subtitleColor} transition-colors duration-1000`}>
           Your care brings hope with every sunrise.
         </p>
       </div>
@@ -92,7 +97,7 @@ export default function NurseSunriseCard() {
       {/* 🌞 Animated Sunrise */}
        <div
         className={`sunrise absolute bottom-[-80px] right-[-80px] 
-        h-96 w-96 rounded-full ${theme.sun} transition-colors duration-1000`}
+        h-96 w-96 rounded-full ${currentTheme.sun} transition-colors duration-1000`}
       />
 
        {/* Soft sky overlay */}
@@ -104,7 +109,7 @@ export default function NurseSunriseCard() {
           width="110"
           height="110"
           viewBox="0 0 24 24"
-          fill={theme.iconFill}
+          fill={currentTheme.iconFill}
           className="transition-colors duration-1000"
         >
           <path d="M12 2C9.79 2 8 3.79 8 6c0 1.66 1.01 3.09 2.44 3.68L10 12h4l-.44-2.32C14.99 9.09 16 7.66 16 6c0-2.21-1.79-4-4-4zm-6 18v-2c0-2.76 4-4 6-4s6 1.24 6 4v2H6z"/>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,14 +55,34 @@ const shuffleArray = (array: any[]) => {
 
 
 export function SelfCareCards() {
-  const [displayedTips, setDisplayedTips] = React.useState<typeof allSelfCareTips>([]);
+  const [displayedTips, setDisplayedTips] = React.useState<(typeof allSelfCareTips)>([]);
+  const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
+    setIsClient(true);
     setDisplayedTips(shuffleArray([...allSelfCareTips]).slice(0, 3));
   }, []);
 
-  if (displayedTips.length === 0) {
-    return null;
+  if (!isClient) {
+    // Render a placeholder or null on the server
+    return (
+        <div>
+            <h2 className="text-xl font-bold mb-4">Quick Self-Care Tips</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[...Array(3)].map((_, i) => (
+                    <Card key={i}>
+                        <CardHeader className="flex flex-row items-center gap-4 space-y-0">
+                            <div className="w-6 h-6 bg-secondary rounded-full" />
+                            <CardTitle className="text-lg bg-secondary h-6 w-32 rounded-md"></CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground bg-secondary h-12 rounded-md"></p>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        </div>
+    );
   }
 
   return (
