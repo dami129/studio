@@ -11,24 +11,11 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { Combobox } from "../ui/combobox";
 import { hospitals } from "@/lib/hospitals";
-
-type User = {
-  name: string;
-  email: string;
-  hospital: string;
-  ward: string;
-  monthlyGoal: string;
-  language: string;
-  notifications: {
-    dutyReminders: boolean;
-    budgetAlerts: boolean;
-    dailyMotivation: boolean;
-  };
-};
+import type { UserProfile } from "@/lib/types";
 
 type ProfileFormProps = {
-  user: User;
-  onSave: (user: User) => void;
+  user: UserProfile;
+  onSave: (user: UserProfile) => void;
 };
 
 const wards = [
@@ -57,19 +44,11 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
     setFormData(prev => ({ ...prev, [id]: value }));
   };
   
-  const handleSelectChange = (value: string) => {
-    setFormData(prev => ({ ...prev, language: value }));
+  const handleSelectChange = (id: keyof UserProfile, value: string) => {
+    setFormData(prev => ({ ...prev, [id]: value }));
   };
 
-  const handleHospitalChange = (value: string) => {
-    setFormData(prev => ({ ...prev, hospital: value }));
-  };
-
-  const handleWardChange = (value: string) => {
-    setFormData(prev => ({ ...prev, ward: value }));
-  };
-
-  const handleSwitchChange = (id: keyof User['notifications']) => {
+  const handleSwitchChange = (id: keyof UserProfile['notifications']) => {
     setFormData(prev => ({
       ...prev,
       notifications: {
@@ -105,7 +84,7 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
             <Combobox
               items={hospitals.map(h => ({ label: h, value: h }))}
               value={formData.hospital}
-              onChange={handleHospitalChange}
+              onChange={(value) => handleSelectChange('hospital', value)}
               placeholder="Select a hospital..."
               searchPlaceholder="Search hospitals..."
               noResultsMessage="No hospital found."
@@ -113,7 +92,7 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="ward">Ward/Unit</Label>
-             <Select value={formData.ward} onValueChange={handleWardChange}>
+             <Select value={formData.ward} onValueChange={(value) => handleSelectChange('ward', value)}>
               <SelectTrigger id="ward">
                 <SelectValue placeholder="Select a ward/unit" />
               </SelectTrigger>
@@ -156,7 +135,7 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
             </div>
             <div className="space-y-2">
             <Label htmlFor="language">Language</Label>
-            <Select value={formData.language.toLowerCase()} onValueChange={handleSelectChange}>
+            <Select value={formData.language.toLowerCase()} onValueChange={(value) => handleSelectChange('language', value)}>
               <SelectTrigger id="language">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>

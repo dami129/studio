@@ -12,6 +12,7 @@ import { useIncome } from "@/hooks/use-income";
 import { useExpenses } from "@/hooks/use-expenses";
 import { isAfter, isBefore, parseISO, startOfToday, isSameMonth } from "date-fns";
 import type { Duty } from "@/lib/types";
+import { useProfile } from "@/hooks/use-profile";
 
 function getSchedule(duties: Duty[]) {
   const today = startOfToday();
@@ -37,6 +38,7 @@ export default function Home() {
   const { duties } = useDuties();
   const { totalIncome } = useIncome();
   const { expenses } = useExpenses();
+  const { user, updateUser } = useProfile();
   
   const schedule = getSchedule(duties);
   
@@ -47,13 +49,6 @@ export default function Home() {
   const budget = {
     income: totalIncome,
     expenses: totalExpenses,
-  };
-
-  const user = {
-    name: "Ayesha Perera",
-    hospital: "General Hospital, Colombo",
-    ward: "Surgical",
-    monthlyGoal: "Complete my advanced CPR certification.",
   };
 
   const initialAiState = {
@@ -82,7 +77,7 @@ export default function Home() {
 
       <DutyCard schedule={schedule} />
       <BudgetCard budget={budget} />
-      <GoalCard goal={user.monthlyGoal} />
+      <GoalCard goal={user.monthlyGoal} onGoalChange={(newGoal) => updateUser({ monthlyGoal: newGoal })} />
       
       <div className="md:col-span-2 lg:col-span-3">
         <QuoteCard 

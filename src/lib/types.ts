@@ -28,9 +28,16 @@ export type Budget = {
 
 export type UserProfile = {
   name: string;
+  email: string;
   hospital: string;
   ward: string;
   monthlyGoal: string;
+  language: string;
+  notifications: {
+      dutyReminders: boolean;
+      budgetAlerts: boolean;
+      dailyMotivation: boolean;
+  };
 };
 
 export type ExpenseCategory = 

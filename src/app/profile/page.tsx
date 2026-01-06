@@ -8,45 +8,15 @@ import { Edit } from "lucide-react";
 import * as React from "react";
 import { AvatarManager } from "@/components/profile/avatar-manager";
 import { useToast } from "@/hooks/use-toast";
-
-const initialUser = {
-    name: "Ayesha Perera",
-    email: "ayesha.p@email.com",
-    hospital: "General Hospital, Colombo",
-    ward: "Surgical",
-    monthlyGoal: "Complete my advanced CPR certification.",
-    language: "English",
-    notifications: {
-        dutyReminders: true,
-        budgetAlerts: true,
-        dailyMotivation: false,
-    }
-};
+import { useProfile } from "@/hooks/use-profile";
 
 export default function ProfilePage() {
     const { toast } = useToast();
-    const [user, setUser] = React.useState(initialUser);
-    const [avatar, setAvatar] = React.useState("https://picsum.photos/seed/nurse/200");
+    const { user, updateUser, avatar, updateAvatar } = useProfile();
     const [isAvatarManagerOpen, setIsAvatarManagerOpen] = React.useState(false);
 
-    React.useEffect(() => {
-        const savedAvatar = localStorage.getItem('user-avatar');
-        if (savedAvatar) {
-            setAvatar(savedAvatar);
-        }
-        const savedUser = localStorage.getItem('user-profile');
-        if (savedUser) {
-            try {
-                setUser(JSON.parse(savedUser));
-            } catch (e) {
-                console.error("Failed to parse user profile from localStorage", e);
-            }
-        }
-    }, []);
-
     const handleAvatarChange = (newAvatar: string) => {
-        setAvatar(newAvatar);
-        localStorage.setItem('user-avatar', newAvatar);
+        updateAvatar(newAvatar);
         setIsAvatarManagerOpen(false);
          toast({
             title: "Avatar Updated",
@@ -55,8 +25,7 @@ export default function ProfilePage() {
     };
 
     const handleProfileSave = (updatedUser: typeof user) => {
-        setUser(updatedUser);
-        localStorage.setItem('user-profile', JSON.stringify(updatedUser));
+        updateUser(updatedUser);
         toast({
             title: "Profile Saved",
             description: "Your changes have been saved successfully.",

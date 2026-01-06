@@ -7,6 +7,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { DutiesProvider } from '@/hooks/use-duties';
 import { ExpensesProvider } from '@/hooks/use-expenses';
 import { IncomeProvider } from '@/hooks/use-income';
+import { ProfileProvider } from '@/hooks/use-profile';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -26,15 +27,17 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
-        <DutiesProvider>
-          <ExpensesProvider>
-            <IncomeProvider>
-              <SidebarProvider>
-                <AppShell>{children}</AppShell>
-              </SidebarProvider>
-            </IncomeProvider>
-          </ExpensesProvider>
-        </DutiesProvider>
+        <ProfileProvider>
+          <DutiesProvider>
+            <ExpensesProvider>
+              <IncomeProvider>
+                <SidebarProvider>
+                  <AppShell>{children}</AppShell>
+                </SidebarProvider>
+              </IncomeProvider>
+            </ExpensesProvider>
+          </DutiesProvider>
+        </ProfileProvider>
         <Toaster />
       </body>
     </html>
