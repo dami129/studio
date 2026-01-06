@@ -78,12 +78,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen w-full">
       <Sidebar collapsible="icon">
         <SidebarHeader className="hidden md:flex items-center gap-3 p-4">
-          <div className="w-[42px] h-[42px] rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105">
-            <Icons.logo className="w-6 h-6 text-primary" />
+          <div className="w-[44px] h-[44px] rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105">
+            <Icons.logo className="w-[26px] h-[26px] text-primary dark:filter dark:brightness-125" />
           </div>
           <div className="flex flex-col">
-            <h3 className="m-0 text-[15px] font-semibold text-gray-800">NurseCare</h3>
-            <span className="text-xs text-gray-500">Sri Lanka</span>
+            <h3 className="m-0 text-[15px] font-semibold text-gray-800 dark:text-slate-200">NurseCare</h3>
+            <span className="text-xs text-gray-500 dark:text-slate-400">Sri Lanka</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
