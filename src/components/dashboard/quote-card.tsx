@@ -95,7 +95,7 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
                 </SelectTrigger>
                 <SelectContent>
                   {recentActivities.map((activity) => (
-                    <SelectItem key={activity.value} value={activity.label}>
+                    <SelectItem key={activity.value} value={activity.value}>
                        <div className="flex items-center">
                         {activity.icon}
                         {activity.label}

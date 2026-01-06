@@ -76,7 +76,7 @@ export default function Home() {
   const recentActivities = [
     { value: 'long-shift', label: t('activity_long_shift'), icon: <Frown className="w-4 h-4 mr-2" /> },
     { value: 'difficult-patient', label: t('activity_difficult_patient'), icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'feeling-unmotivated', label: t('activity_unmotivated'), icon: <Frown className="w-4 h-4 mr-2" /> },
+    { value: 'unmotivated', label: t('activity_unmotivated'), icon: <Frown className="w-4 h-4 mr-2" /> },
     { value: 'great-teamwork', label: t('activity_great_teamwork'), icon: <Smile className="w-4 h-4 mr-2" /> },
     { value: 'patient-recovery', label: t('activity_patient_recovery'), icon: <Heart className="w-4 h-4 mr-2" /> },
   ];
