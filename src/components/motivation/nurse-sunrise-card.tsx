@@ -14,7 +14,7 @@ function getTimeGradient() {
       text: "A New Day Begins",
       textColor: "text-slate-800",
       subtitleColor: "text-slate-600",
-      emojiOpacity: "opacity-25"
+      iconFill: "rgba(51, 65, 85, 0.25)" // slate-700 at 25%
     };
   }
 
@@ -26,7 +26,7 @@ function getTimeGradient() {
       text: "Keep Shining Today",
       textColor: "text-slate-800",
       subtitleColor: "text-slate-600",
-      emojiOpacity: "opacity-25"
+      iconFill: "rgba(51, 65, 85, 0.25)"
     };
   }
 
@@ -38,7 +38,7 @@ function getTimeGradient() {
       text: "You’ve Done Great Today",
       textColor: "text-white drop-shadow-sm",
       subtitleColor: "text-white/90",
-      emojiOpacity: "opacity-30"
+      iconFill: "rgba(255, 255, 255, 0.3)" // white at 30%
     };
   }
 
@@ -49,7 +49,7 @@ function getTimeGradient() {
     text: "Rest. Recharge. You Matter.",
     textColor: "text-white drop-shadow-sm",
     subtitleColor: "text-white/90",
-    emojiOpacity: "opacity-30"
+    iconFill: "rgba(255, 255, 255, 0.3)"
   };
 }
 
@@ -60,7 +60,7 @@ export default function NurseSunriseCard() {
       text: "A New Day Begins",
       textColor: "text-slate-800",
       subtitleColor: "text-slate-600",
-      emojiOpacity: "opacity-25"
+      iconFill: "rgba(51, 65, 85, 0.25)"
   });
 
   useEffect(() => {
@@ -99,8 +99,16 @@ export default function NurseSunriseCard() {
       <div className="absolute inset-0 bg-white/10" />
 
       {/* Nurse silhouette */}
-      <div className={`absolute bottom-6 left-6 text-8xl ${theme.emojiOpacity} transition-opacity duration-1000`}>
-        🧑‍⚕️
+      <div className="absolute bottom-4 left-6">
+        <svg
+          width="110"
+          height="110"
+          viewBox="0 0 24 24"
+          fill={theme.iconFill}
+          className="transition-colors duration-1000"
+        >
+          <path d="M12 2C9.79 2 8 3.79 8 6c0 1.66 1.01 3.09 2.44 3.68L10 12h4l-.44-2.32C14.99 9.09 16 7.66 16 6c0-2.21-1.79-4-4-4zm-6 18v-2c0-2.76 4-4 6-4s6 1.24 6 4v2H6z"/>
+        </svg>
       </div>
     </div>
   );
