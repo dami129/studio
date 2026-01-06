@@ -7,7 +7,7 @@ import { useProfile } from "@/hooks/use-profile"
 
 function ThemeWatcher() {
   const { setTheme, theme } = useTheme()
-  const { user, updateUser } = useProfile()
+  const { user } = useProfile()
 
   React.useEffect(() => {
     if (user.theme && theme !== user.theme) {
@@ -32,8 +32,10 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
         key={user.theme}
         forcedTheme={user.theme}
         >
-        <ThemeWatcher />
-        {children}
+        <>
+            <ThemeWatcher />
+            {children}
+        </>
         </NextThemesProvider>
     )
 }
