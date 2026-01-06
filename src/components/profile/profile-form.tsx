@@ -29,7 +29,8 @@ const wards = [
   "Blood Bank", 
   "Orthopaedic", 
   "Cardiology", 
-  "Cardiothoracic"
+  "Cardiothoracic",
+  "Other"
 ];
 
 export function ProfileForm({ user, onSave }: ProfileFormProps) {
