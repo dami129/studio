@@ -9,6 +9,7 @@ import { ExpensesProvider } from '@/hooks/use-expenses';
 import { IncomeProvider } from '@/hooks/use-income';
 import { ProfileProvider } from '@/hooks/use-profile';
 import { LanguageProvider } from '@/hooks/use-language';
+import { ThemeProvider } from '@/components/layout/theme-provider';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -31,17 +32,19 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
         <ProfileProvider>
-          <LanguageProvider>
-            <DutiesProvider>
-              <ExpensesProvider>
-                <IncomeProvider>
-                  <SidebarProvider>
-                    <AppShell>{children}</AppShell>
-                  </SidebarProvider>
-                </IncomeProvider>
-              </ExpensesProvider>
-            </DutiesProvider>
-          </LanguageProvider>
+          <ThemeProvider>
+            <LanguageProvider>
+              <DutiesProvider>
+                <ExpensesProvider>
+                  <IncomeProvider>
+                    <SidebarProvider>
+                      <AppShell>{children}</AppShell>
+                    </SidebarProvider>
+                  </IncomeProvider>
+                </ExpensesProvider>
+              </DutiesProvider>
+            </LanguageProvider>
+          </ThemeProvider>
         </ProfileProvider>
         <Toaster />
       </body>

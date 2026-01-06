@@ -1,4 +1,3 @@
-
 {
   "nav_dashboard": "මුල් පිටුව",
   "nav_roster": "රාජකාරි ලේඛනය",
@@ -153,5 +152,8 @@
   "color_purple": "දම්",
   "color_gray": "අළු",
   "color_pink": "රෝස",
-  "color_red": "රතු"
+  "color_red": "රතු",
+  "theme": "තේමාව",
+  "light_theme": "ආලෝකය",
+  "dark_theme": "අඳුරු"
 }

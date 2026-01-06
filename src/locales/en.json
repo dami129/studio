@@ -1,4 +1,3 @@
-
 {
   "nav_dashboard": "Dashboard",
   "nav_roster": "Duty Roster",
@@ -153,5 +152,8 @@
   "color_purple": "Purple",
   "color_gray": "Gray",
   "color_pink": "Pink",
-  "color_red": "Red"
+  "color_red": "Red",
+  "theme": "Theme",
+  "light_theme": "Light",
+  "dark_theme": "Dark"
 }

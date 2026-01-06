@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -11,6 +10,7 @@ const initialUser: UserProfile = {
     ward: "Surgical",
     monthlyGoal: "Complete my advanced CPR certification.",
     language: "English",
+    theme: "light",
     notifications: {
         dutyReminders: true,
         budgetAlerts: true,
@@ -38,7 +38,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     try {
       const savedUser = localStorage.getItem('user-profile');
       if (savedUser) {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        // Merge with initial user to ensure all keys are present
+        setUser({ ...initialUser, ...parsedUser });
       }
       const savedAvatar = localStorage.getItem('user-avatar');
       if (savedAvatar) {

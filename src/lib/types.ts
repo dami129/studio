@@ -33,6 +33,7 @@ export type UserProfile = {
   ward: string;
   monthlyGoal: string;
   language: string;
+  theme: "light" | "dark" | "system";
   notifications: {
       dutyReminders: boolean;
       budgetAlerts: boolean;

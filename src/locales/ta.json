@@ -1,4 +1,3 @@
-
 {
   "nav_dashboard": "முதன்மைப் பலகை",
   "nav_roster": "கடமைப் பட்டியல்",
@@ -153,5 +152,8 @@
   "color_purple": "ஊதா",
   "color_gray": "சாம்பல்",
   "color_pink": "இளஞ்சிவப்பு",
-  "color_red": "சிவப்பு"
+  "color_red": "சிவப்பு",
+  "theme": "தீம்",
+  "light_theme": "ஒளி",
+  "dark_theme": "இருண்ட"
 }
