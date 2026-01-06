@@ -40,7 +40,7 @@ function getSchedule(duties: Duty[]) {
 
         if (!shiftInfo) {
             // Handle full-day events like 'Leave' or 'Off'
-            const startDateTime = startOfToday(); // Treat as starting at the beginning of the day
+            const startDateTime = setHours(setMinutes(setSeconds(dutyDate, 0), 0), 0);
             const endDateTime = setHours(setMinutes(setSeconds(dutyDate, 59), 59), 23);
             return { ...d, startDateTime, endDateTime };
         }
