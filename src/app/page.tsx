@@ -10,7 +10,7 @@ import { Frown, Smile, Users } from "lucide-react";
 import { useDuties } from "@/hooks/use-duties";
 import { useIncome } from "@/hooks/use-income";
 import { useExpenses } from "@/hooks/use-expenses";
-import { isBefore, parseISO, startOfToday, isSameMonth, setHours, setMinutes, setSeconds, isAfter, addDays, formatDistanceToNow, format } from "date-fns";
+import { isBefore, parseISO, startOfToday, isSameMonth, setHours, setMinutes, setSeconds, isAfter, addDays, formatDistanceToNow, format, differenceInHours } from "date-fns";
 import type { Duty, ShiftType } from "@/lib/types";
 import { useProfile } from "@/hooks/use-profile";
 import { useToast } from "@/hooks/use-toast";
@@ -80,7 +80,7 @@ function getSchedule(duties: Duty[]) {
     .sort((a, b) => b.endDateTime.getTime() - a.endDateTime.getTime());
   
   return {
-    next: upcomingDuties.length > 0 ? { type: upcomingDuties[0].type, date: upcomingDuties[0].date } : null,
+    next: upcomingDuties.length > 0 ? { type: upcomingDuties[0].type, date: upcomingDuties[0].date, startDateTime: upcomingDuties[0].startDateTime } : null,
     previous: pastDuties.length > 0 ? { type: pastDuties[0].type, date: pastDuties[0].date } : null,
   };
 }
@@ -97,33 +97,43 @@ export default function Home() {
   const schedule = getSchedule(duties);
 
   React.useEffect(() => {
-    let notificationSent = false;
-    const dutyReminderTimer = setTimeout(() => {
-      if (user.notifications.dutyReminders && schedule.next) {
-        const nextDutyDate = parseISO(schedule.next.date);
-        const message = `Your next duty is a ${t(`shift_${schedule.next.type}`)} shift on ${format(nextDutyDate, "EEE, MMM d")} (${formatDistanceToNow(nextDutyDate, { addSuffix: true })}).`;
-        toast({
-          title: "Upcoming Duty Reminder",
-          description: message,
-        });
-        notificationSent = true;
-      }
-    }, 1000);
-
-    const motivationTimer = setTimeout(() => {
-        if (!notificationSent && user.notifications.dailyMotivation) {
+    let motivationTimer: NodeJS.Timeout;
+    
+    if (user.notifications.dutyReminders && schedule.next) {
+        const now = new Date();
+        const dutyStart = schedule.next.startDateTime;
+        const hoursUntilDuty = differenceInHours(dutyStart, now);
+        const notificationKey = `duty-notified-${schedule.next.date}-${schedule.next.type}`;
+        
+        // Check if duty is within 2 hours and notification hasn't been sent in this session
+        if (hoursUntilDuty >= 0 && hoursUntilDuty <= 2 && !sessionStorage.getItem(notificationKey)) {
+            const message = `Your next duty is a ${t(`shift_${schedule.next.type}`)} shift on ${format(dutyStart, "EEE, MMM d")} (${formatDistanceToNow(dutyStart, { addSuffix: true })}).`;
             toast({
+              title: "Upcoming Duty Reminder",
+              description: message,
+            });
+            sessionStorage.setItem(notificationKey, 'true');
+            // If a duty reminder is sent, we don't send a motivation toast.
+            return;
+        }
+    }
+    
+    // If no duty reminder was sent, consider sending a motivation toast.
+    motivationTimer = setTimeout(() => {
+        const motivationKey = `motivation-notified-${new Date().toISOString().split('T')[0]}`;
+        if (user.notifications.dailyMotivation && !sessionStorage.getItem(motivationKey)) {
+             toast({
               title: t('daily_motivation_title'),
               description: t('daily_motivation_desc'),
             });
+            sessionStorage.setItem(motivationKey, 'true');
         }
-    }, 1500); // Delay this slightly to ensure duty reminder has priority
+    }, 1500);
 
     return () => {
-        clearTimeout(dutyReminderTimer);
         clearTimeout(motivationTimer);
     }
-  }, [user.notifications.dutyReminders, user.notifications.dailyMotivation, schedule.next, toast, t]);
+  }, [user.notifications, schedule.next, toast, t]);
   
   
   const currentMonth = new Date();
