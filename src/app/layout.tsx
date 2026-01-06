@@ -8,6 +8,7 @@ import { DutiesProvider } from '@/hooks/use-duties';
 import { ExpensesProvider } from '@/hooks/use-expenses';
 import { IncomeProvider } from '@/hooks/use-income';
 import { ProfileProvider } from '@/hooks/use-profile';
+import { LanguageProvider } from '@/hooks/use-language';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -25,18 +26,22 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
         <ProfileProvider>
-          <DutiesProvider>
-            <ExpensesProvider>
-              <IncomeProvider>
-                <SidebarProvider>
-                  <AppShell>{children}</AppShell>
-                </SidebarProvider>
-              </IncomeProvider>
-            </ExpensesProvider>
-          </DutiesProvider>
+          <LanguageProvider>
+            <DutiesProvider>
+              <ExpensesProvider>
+                <IncomeProvider>
+                  <SidebarProvider>
+                    <AppShell>{children}</AppShell>
+                  </SidebarProvider>
+                </IncomeProvider>
+              </ExpensesProvider>
+            </DutiesProvider>
+          </LanguageProvider>
         </ProfileProvider>
         <Toaster />
       </body>

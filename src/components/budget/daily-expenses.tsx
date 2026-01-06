@@ -17,6 +17,7 @@ import {
 import type { Expense, ExpenseCategory } from "@/lib/types"
 import { format, parseISO } from "date-fns"
 import { ShoppingCart, Bus, Utensils, Heart, BookOpen, Film, Tag, Smartphone } from "lucide-react"
+import { useLanguage } from "@/hooks/use-language"
 
 const categoryIcons: Record<ExpenseCategory, React.ReactNode> = {
     'Food': <Utensils className="h-5 w-5 text-muted-foreground" />,
@@ -33,6 +34,7 @@ const categoryIcons: Record<ExpenseCategory, React.ReactNode> = {
 
 
 export function DailyExpenses({ expenses }: { expenses: Expense[] }) {
+  const { t } = useLanguage();
   const formatter = new Intl.NumberFormat('en-LK', {
     style: 'currency',
     currency: 'LKR',
@@ -42,23 +44,23 @@ export function DailyExpenses({ expenses }: { expenses: Expense[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Daily Expenses</CardTitle>
-        <CardDescription>A list of your transactions for today.</CardDescription>
+        <CardTitle>{t('daily_expenses_title')}</CardTitle>
+        <CardDescription>{t('daily_expenses_desc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Category</TableHead>
-              <TableHead className="hidden sm:table-cell">Description</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>{t('category')}</TableHead>
+              <TableHead className="hidden sm:table-cell">{t('description')}</TableHead>
+              <TableHead className="text-right">{t('amount')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {expenses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={3} className="text-center text-muted-foreground">
-                  No expenses recorded for today.
+                  {t('no_expenses_today')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -69,7 +71,7 @@ export function DailyExpenses({ expenses }: { expenses: Expense[] }) {
                       <div className="bg-secondary p-2 rounded-md hidden sm:block">
                           {categoryIcons[expense.category] || <Tag className="h-5 w-5 text-muted-foreground" />}
                       </div>
-                      <span className="font-medium">{expense.category}</span>
+                      <span className="font-medium">{t(`category_${expense.category.toLowerCase().replace(/ /g, '_')}`)}</span>
                     </div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">{expense.description}</TableCell>

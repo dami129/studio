@@ -6,7 +6,7 @@ import { DutyCard } from "@/components/dashboard/duty-card";
 import { BudgetCard } from "@/components/dashboard/budget-card";
 import { GoalCard } from "@/components/dashboard/goal-card";
 import { QuoteCard } from "@/components/dashboard/quote-card";
-import { Frown } from "lucide-react";
+import { Frown, Smile, Heart, Users } from "lucide-react";
 import { useDuties } from "@/hooks/use-duties";
 import { useIncome } from "@/hooks/use-income";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -14,6 +14,7 @@ import { isAfter, isBefore, parseISO, startOfToday, isSameMonth } from "date-fns
 import type { Duty } from "@/lib/types";
 import { useProfile } from "@/hooks/use-profile";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 function getSchedule(duties: Duty[]) {
   const today = startOfToday();
@@ -36,6 +37,7 @@ function getSchedule(duties: Duty[]) {
 
 
 export default function Home() {
+  const { t } = useLanguage();
   const { duties } = useDuties();
   const { totalIncome } = useIncome();
   const { expenses } = useExpenses();
@@ -47,13 +49,13 @@ export default function Home() {
       // Set a timeout to allow the main page to render first
       const timer = setTimeout(() => {
         toast({
-          title: "🌟 Your Daily Motivation",
-          description: "Remember to take a moment for yourself today. You're doing an amazing job!",
+          title: t('daily_motivation_title'),
+          description: t('daily_motivation_desc'),
         });
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [user.notifications.dailyMotivation, toast]);
+  }, [user.notifications.dailyMotivation, toast, t]);
   
   const schedule = getSchedule(duties);
   
@@ -72,21 +74,21 @@ export default function Home() {
   };
 
   const recentActivities = [
-    { value: 'long-shift', label: 'Had a long and tiring shift', icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'difficult-patient', label: 'Dealt with a difficult patient interaction', icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'feeling-unmotivated', label: 'Feeling a bit unmotivated lately', icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'great-teamwork', label: 'Experienced great teamwork with colleagues', icon: <Frown className="w-4 h-4 mr-2" /> },
-    { value: 'patient-recovery', label: 'Witnessed a heartwarming patient recovery', icon: <Frown className="w-4 h-4 mr-2" /> },
+    { value: 'long-shift', label: t('activity_long_shift'), icon: <Frown className="w-4 h-4 mr-2" /> },
+    { value: 'difficult-patient', label: t('activity_difficult_patient'), icon: <Frown className="w-4 h-4 mr-2" /> },
+    { value: 'feeling-unmotivated', label: t('activity_unmotivated'), icon: <Frown className="w-4 h-4 mr-2" /> },
+    { value: 'great-teamwork', label: t('activity_great_teamwork'), icon: <Smile className="w-4 h-4 mr-2" /> },
+    { value: 'patient-recovery', label: t('activity_patient_recovery'), icon: <Heart className="w-4 h-4 mr-2" /> },
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-3">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground/90">
-          Welcome back, {user.name.split(" ")[0]}
+          {t('welcome_back')}, {user.name.split(" ")[0]}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Here’s your daily overview. Stay strong and inspired.
+          {t('dashboard_subtitle')}
         </p>
       </div>
 

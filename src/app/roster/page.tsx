@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Download, Share2 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function RosterPage() {
+  const { t } = useLanguage();
   const { duties, setDuties } = useDuties();
   const [shiftColors, setShiftColors] = React.useState<ShiftColors>({
     Morning: "bg-blue-200 text-blue-800 hover:bg-blue-200/80",
@@ -112,15 +114,15 @@ export default function RosterPage() {
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground/90">
-            Duty Roster
+            {t('duty_roster_title')}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Here is your schedule. Click on a date to add or edit a shift.
+            {t('duty_roster_subtitle')}
           </p>
         </div>
         <div className="flex gap-2">
-            <Button variant="outline" onClick={handleExportPdf}><Download className="w-4 h-4 mr-2" /> Export PDF</Button>
-            <Button variant="outline" onClick={handleShareImage}><Share2 className="w-4 h-4 mr-2" /> Share Image</Button>
+            <Button variant="outline" onClick={handleExportPdf}><Download className="w-4 h-4 mr-2" /> {t('export_pdf')}</Button>
+            <Button variant="outline" onClick={handleShareImage}><Share2 className="w-4 h-4 mr-2" /> {t('share_image')}</Button>
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

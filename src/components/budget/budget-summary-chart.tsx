@@ -16,6 +16,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import type { Expense } from "@/lib/types"
+import { useLanguage } from "@/hooks/use-language"
 
 const chartConfig = {
   expenses: {
@@ -29,7 +30,7 @@ const chartConfig = {
     label: "Transport",
     color: "hsl(var(--chart-2))",
   },
-  mobilebills: {
+  mobile_bills: {
     label: "Mobile Bills",
     color: "hsl(var(--chart-3))",
   },
@@ -53,7 +54,7 @@ const chartConfig = {
     label: "Salon",
     color: "hsl(var(--chart-3))",
   },
-  cardpayments: {
+  card_payments: {
     label: "Card Payments",
     color: "hsl(var(--chart-4))",
   },
@@ -64,10 +65,12 @@ const chartConfig = {
 }
 
 export function BudgetSummaryChart({ expenses }: { expenses: Expense[] }) {
+  const { t } = useLanguage();
+
   const chartData = React.useMemo(() => {
     const dataMap = new Map<string, number>()
     expenses.forEach(expense => {
-      const key = expense.category.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const key = expense.category.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/ /g, '_');
       const chartKey = (key in chartConfig) ? key : 'others'
       dataMap.set(chartKey, (dataMap.get(chartKey) || 0) + expense.amount)
     })
@@ -77,6 +80,20 @@ export function BudgetSummaryChart({ expenses }: { expenses: Expense[] }) {
       fill: (chartConfig[name as keyof typeof chartConfig] as any)?.color || 'hsl(var(--muted))',
     }));
   }, [expenses]);
+  
+  const localizedChartConfig = React.useMemo(() => {
+      const newConfig: any = {};
+      for (const key in chartConfig) {
+          if (Object.prototype.hasOwnProperty.call(chartConfig, key)) {
+              const typedKey = key as keyof typeof chartConfig;
+              newConfig[typedKey] = {
+                  ...chartConfig[typedKey],
+                  label: t(`category_${key}`),
+              }
+          }
+      }
+      return newConfig;
+  }, [t]);
 
   const totalExpenses = React.useMemo(() => {
     return expenses.reduce((acc, curr) => acc + curr.amount, 0)
@@ -85,13 +102,13 @@ export function BudgetSummaryChart({ expenses }: { expenses: Expense[] }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Spending Overview</CardTitle>
-        <CardDescription>Breakdown by category for this month</CardDescription>
+        <CardTitle>{t('spending_overview')}</CardTitle>
+        <CardDescription>{t('spending_overview_desc')}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         {chartData.length > 0 ? (
           <ChartContainer
-            config={chartConfig}
+            config={localizedChartConfig}
             className="mx-auto aspect-square max-h-[250px]"
           >
             <PieChart>
@@ -128,7 +145,7 @@ export function BudgetSummaryChart({ expenses }: { expenses: Expense[] }) {
                             y={(viewBox.cy || 0) + 24}
                             className="fill-muted-foreground"
                           >
-                            Total Spent
+                            {t('total_spent')}
                           </tspan>
                         </text>
                       )
@@ -140,7 +157,7 @@ export function BudgetSummaryChart({ expenses }: { expenses: Expense[] }) {
           </ChartContainer>
         ) : (
           <div className="flex h-[250px] w-full items-center justify-center text-muted-foreground">
-            No expenses to display for this month.
+            {t('no_expenses_to_display')}
           </div>
         )}
       </CardContent>

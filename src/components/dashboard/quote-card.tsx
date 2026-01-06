@@ -16,6 +16,7 @@ import { Sparkles, Bot, Loader2 } from "lucide-react";
 import { PersonalizedQuoteInput } from "@/ai/flows/personalized-motivational-quotes";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import React from "react";
+import { useLanguage } from "@/hooks/use-language";
 
 type QuoteCardProps = {
   user: {
@@ -33,6 +34,7 @@ type QuoteCardProps = {
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const { t } = useLanguage();
   return (
     <Button type="submit" disabled={pending} className="w-full md:w-auto">
       {pending ? (
@@ -40,12 +42,13 @@ function SubmitButton() {
       ) : (
         <Sparkles className="mr-2 h-4 w-4" />
       )}
-      Generate My Quote
+      {t('generate_my_quote')}
     </Button>
   );
 }
 
 export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardProps) {
+  const { t } = useLanguage();
   const [state, formAction] = useActionState(generateQuoteAction, initialAiState);
   const [recentActivity, setRecentActivity] = useState("");
 
@@ -54,7 +57,7 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <Bot className="w-5 h-5 text-primary" />
-          <span>Your Daily Motivation</span>
+          <span>{t('your_daily_motivation')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -66,13 +69,13 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
           </div>
         ) : (
           <p className="text-muted-foreground text-center">
-            Tell us how you're feeling to get a personalized quote.
+            {t('get_personalized_quote_prompt')}
           </p>
         )}
 
         {state.error && (
             <Alert variant="destructive">
-                <AlertTitle>Error</AlertTitle>
+                <AlertTitle>{t('error')}</AlertTitle>
                 <AlertDescription>{state.error}</AlertDescription>
             </Alert>
         )}
@@ -87,7 +90,7 @@ export function QuoteCard({ user, initialAiState, recentActivities }: QuoteCardP
             <div className="w-full md:flex-1">
               <Select name="recentActivity" onValueChange={setRecentActivity} required>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="How was your recent shift?" />
+                  <SelectValue placeholder={t('recent_shift_placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {recentActivities.map((activity) => (

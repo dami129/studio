@@ -10,10 +10,12 @@ import { useIncome } from "@/hooks/use-income";
 import { IncomeCard } from "@/components/budget/income-card";
 import { isSameMonth, parseISO, isToday } from "date-fns";
 import { DailyExpenses } from "@/components/budget/daily-expenses";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function BudgetPage() {
   const { expenses } = useExpenses();
   const { totalIncome } = useIncome();
+  const { t } = useLanguage();
 
   const currentMonth = new Date();
   const monthlyExpenses = expenses.filter(expense => isSameMonth(parseISO(expense.date), currentMonth));
@@ -32,10 +34,10 @@ export default function BudgetPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground/90">
-          Budget Manager
+          {t('budget_manager_title')}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Keep track of your income and expenses.
+          {t('budget_manager_subtitle')}
         </p>
       </div>
 
@@ -43,7 +45,7 @@ export default function BudgetPage() {
         <IncomeCard />
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('total_expenses')}</CardTitle>
                 <span className="text-sm text-muted-foreground">LKR</span>
             </CardHeader>
             <CardContent>
@@ -52,7 +54,7 @@ export default function BudgetPage() {
         </Card>
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Remaining</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('remaining')}</CardTitle>
                 <span className="text-sm text-muted-foreground">LKR</span>
             </CardHeader>
             <CardContent>

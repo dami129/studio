@@ -9,8 +9,10 @@ import * as React from "react";
 import { AvatarManager } from "@/components/profile/avatar-manager";
 import { useToast } from "@/hooks/use-toast";
 import { useProfile } from "@/hooks/use-profile";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function ProfilePage() {
+    const { t } = useLanguage();
     const { toast } = useToast();
     const { user, updateUser, avatar, updateAvatar } = useProfile();
     const [isAvatarManagerOpen, setIsAvatarManagerOpen] = React.useState(false);
@@ -19,16 +21,16 @@ export default function ProfilePage() {
         updateAvatar(newAvatar);
         setIsAvatarManagerOpen(false);
          toast({
-            title: "Avatar Updated",
-            description: "Your new profile photo has been saved.",
+            title: t('avatar_updated_title'),
+            description: t('avatar_updated_desc'),
         });
     };
 
     const handleProfileSave = (updatedUser: typeof user) => {
         updateUser(updatedUser);
         toast({
-            title: "Profile Saved",
-            description: "Your changes have been saved successfully.",
+            title: t('profile_saved_title'),
+            description: t('profile_saved_desc'),
         });
     }
 
@@ -36,10 +38,10 @@ export default function ProfilePage() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground/90">
-                User Profile
+                {t('user_profile_title')}
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                Manage your personal information and app settings.
+                {t('user_profile_subtitle')}
                 </p>
             </div>
 

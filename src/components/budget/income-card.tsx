@@ -8,17 +8,19 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import type { IncomeSource } from "@/lib/types";
 import { Check, Edit } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 const incomeSources: { id: IncomeSource; label: string }[] = [
-    { id: "jobSalary", label: "Job Salary" },
-    { id: "sideIncome", label: "Side Income" },
-    { id: "privatePractice", label: "Private Practice" },
-    { id: "others", label: "Others" },
+    { id: "jobSalary", label: "income_source_job_salary" },
+    { id: "sideIncome", label: "income_source_side_income" },
+    { id: "privatePractice", label: "income_source_private_practice" },
+    { id: "others", label: "income_source_others" },
 ];
 
 
 export function IncomeCard() {
     const { income, updateIncome, totalIncome } = useIncome();
+    const { t } = useLanguage();
     const [isEditing, setIsEditing] = React.useState(false);
     const [localIncome, setLocalIncome] = React.useState(income);
 
@@ -47,10 +49,10 @@ export function IncomeCard() {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('total_income')}</CardTitle>
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
                     {isEditing ? <Check className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
-                    <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
+                    <span className="sr-only">{isEditing ? t('save') : t('edit')}</span>
                 </Button>
             </CardHeader>
             <CardContent>
@@ -60,7 +62,7 @@ export function IncomeCard() {
                     <div className="space-y-4 pt-2">
                         {incomeSources.map(source => (
                             <div key={source.id} className="space-y-1">
-                                <Label htmlFor={source.id} className="text-xs">{source.label}</Label>
+                                <Label htmlFor={source.id} className="text-xs">{t(source.label)}</Label>
                                 <div className="flex items-center gap-2">
                                      <span className="text-sm text-muted-foreground">LKR</span>
                                     <Input

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { ShiftType, ShiftColors } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Palette } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 const colorOptions = [
     { name: "Blue", class: "bg-blue-200 text-blue-800 hover:bg-blue-200/80" },
@@ -21,7 +22,7 @@ const colorOptions = [
 ];
 
 export function RosterSettings({ shiftColors, onColorChange }: { shiftColors: ShiftColors, onColorChange: (shiftType: ShiftType, colorClass: string) => void }) {
-    
+    const { t } = useLanguage();
     const shiftTypes = Object.keys(shiftColors) as ShiftType[];
 
     return (
@@ -29,27 +30,27 @@ export function RosterSettings({ shiftColors, onColorChange }: { shiftColors: Sh
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Palette className="w-5 h-5 text-primary" />
-                    <span>Roster Settings</span>
+                    <span>{t('roster_settings_title')}</span>
                 </CardTitle>
-                <CardDescription>Customize the colors for your shifts.</CardDescription>
+                <CardDescription>{t('roster_settings_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 {shiftTypes.map(shiftType => (
                     <div key={shiftType} className="flex items-center justify-between">
-                        <Label>{shiftType}</Label>
+                        <Label>{t(`shift_${shiftType.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}</Label>
                         <Select
                             value={shiftColors[shiftType]}
                             onValueChange={(value) => onColorChange(shiftType, value)}
                         >
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select a color" />
+                                <SelectValue placeholder={t('select_color_placeholder')} />
                             </SelectTrigger>
                             <SelectContent>
                                 {colorOptions.map(color => (
                                     <SelectItem key={color.class} value={color.class}>
                                         <div className="flex items-center gap-2">
                                             <div className={cn("w-4 h-4 rounded-full", color.class.split(' ')[0])}></div>
-                                            <span>{color.name}</span>
+                                            <span>{t(`color_${color.name.toLowerCase()}`)}</span>
                                         </div>
                                     </SelectItem>
                                 ))}

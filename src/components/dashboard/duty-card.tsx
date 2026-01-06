@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Schedule, ShiftType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar } from "lucide-react";
+import { useLanguage } from "@/hooks/use-language";
 
 const shiftColors: Record<ShiftType, string> = {
   Morning: "bg-blue-200 text-blue-800",
@@ -17,6 +18,7 @@ const shiftColors: Record<ShiftType, string> = {
 };
 
 function ShiftBadge({ type }: { type: ShiftType }) {
+  const { t } = useLanguage();
   return (
     <span
       className={cn(
@@ -24,26 +26,27 @@ function ShiftBadge({ type }: { type: ShiftType }) {
         shiftColors[type] || "bg-gray-200 text-gray-800"
       )}
     >
-      {type}
+      {t(`shift_${type.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
     </span>
   );
 }
 
 export function DutyCard({ schedule }: { schedule: Schedule | { next: null; previous: null } }) {
+  const { t } = useLanguage();
   const { next, previous } = schedule;
   return (
     <Card className="flex flex-col">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <Calendar className="w-5 h-5 text-primary" />
-          <span>Duty Schedule</span>
+          <span>{t('duty_schedule')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col flex-grow gap-4 justify-center">
         {next ? (
           <div className="space-y-2">
             <h3 className="text-sm font-semibold text-muted-foreground">
-              Next Duty
+              {t('next_duty')}
             </h3>
             <div className="flex items-center justify-between p-3 rounded-lg bg-secondary">
               <ShiftBadge type={next.type} />
@@ -56,12 +59,12 @@ export function DutyCard({ schedule }: { schedule: Schedule | { next: null; prev
             </div>
           </div>
         ) : (
-          <p className="text-center text-muted-foreground">No upcoming duties scheduled.</p>
+          <p className="text-center text-muted-foreground">{t('no_upcoming_duties')}</p>
         )}
         {previous && (
            <div className="space-y-2">
             <h3 className="text-sm font-semibold text-muted-foreground">
-              Previous Duty
+              {t('previous_duty')}
             </h3>
             <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
               <ShiftBadge type={previous.type} />

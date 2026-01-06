@@ -17,6 +17,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { useLanguage } from "@/hooks/use-language";
 
 const normalShifts: ShiftType[] = ["Morning", "Evening", "Night"];
 const specialShifts: ShiftType[] = ["Training", "Leave (CL/VL/SL)", "Off (Day Off)"];
@@ -43,6 +44,7 @@ const RosterCalendar = React.forwardRef<
   weekDays,
   emptyCells
 }, ref) => {
+  const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [showOvertimeOptions, setShowOvertimeOptions] = React.useState(false);
 
@@ -140,7 +142,7 @@ const RosterCalendar = React.forwardRef<
                         )}
                         variant="default"
                       >
-                        {shift}
+                        {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
                       </Badge>
                     ))}
                   </div>
@@ -154,15 +156,15 @@ const RosterCalendar = React.forwardRef<
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Manage Duty for {selectedDate && format(selectedDate, "MMMM d, yyyy")}
+              {t('manage_duty_for')} {selectedDate && format(selectedDate, "MMMM d, yyyy")}
             </DialogTitle>
             <DialogDescription>
-              Select the duties that apply to this day. You can select one normal duty and multiple other duties.
+              {t('manage_duty_desc')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <h4 className="font-semibold mb-2">Normal Duties</h4>
+              <h4 className="font-semibold mb-2">{t('normal_duties')}</h4>
               <div className="flex flex-wrap gap-2">
                 {normalShifts.map(shift => (
                   <Button
@@ -174,14 +176,14 @@ const RosterCalendar = React.forwardRef<
                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                     })}
                   >
-                    {shift}
+                    {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
                   </Button>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-2">Overtime</h4>
-                <Button variant="outline" onClick={() => setShowOvertimeOptions(!showOvertimeOptions)}>Add Overtime</Button>
+              <h4 className="font-semibold mb-2">{t('shift_overtime')}</h4>
+                <Button variant="outline" onClick={() => setShowOvertimeOptions(!showOvertimeOptions)}>{t('add_overtime')}</Button>
                 {showOvertimeOptions && (
                     <div className="mt-2 flex flex-col gap-2">
                         {overtimeShifts.map(shift => (
@@ -191,14 +193,14 @@ const RosterCalendar = React.forwardRef<
                                 variant="outline"
                                 className="w-full justify-start"
                             >
-                                {shift}
+                                {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
                             </Button>
                         ))}
                     </div>
                 )}
             </div>
              <div>
-              <h4 className="font-semibold mb-2">Other Shift Types</h4>
+              <h4 className="font-semibold mb-2">{t('other_shift_types')}</h4>
               <div className="flex flex-wrap gap-2">
                 {specialShifts.map(shift => (
                   <Button
@@ -210,7 +212,7 @@ const RosterCalendar = React.forwardRef<
                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                     })}
                   >
-                    {shift}
+                    {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
                   </Button>
                 ))}
               </div>

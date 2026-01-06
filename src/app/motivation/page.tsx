@@ -1,5 +1,6 @@
 import { AffirmationsPlayer } from "@/components/motivation/affirmations-player";
 import { SelfCareCards } from "@/components/motivation/self-care-cards";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function MotivationPage() {
   return (

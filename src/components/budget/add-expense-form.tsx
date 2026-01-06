@@ -29,6 +29,7 @@ import { useExpenses } from "@/hooks/use-expenses";
 import type { Expense, ExpenseCategory } from "@/lib/types";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/use-language";
 
 const expenseCategories: ExpenseCategory[] = [
   "Food",
@@ -46,6 +47,7 @@ const expenseCategories: ExpenseCategory[] = [
 export function AddExpenseForm() {
   const { addExpense } = useExpenses();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [open, setOpen] = React.useState(false);
   const [amount, setAmount] = React.useState("");
   const [category, setCategory] = React.useState<ExpenseCategory | "">("");
@@ -55,7 +57,7 @@ export function AddExpenseForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!amount || !category) {
-        setError("Amount and category are required.");
+        setError(t('add_expense_error_required'));
         return;
     }
 
@@ -69,8 +71,8 @@ export function AddExpenseForm() {
     addExpense(newExpense);
 
     toast({
-        title: "Expense Added",
-        description: `${description || category} has been added to your expenses.`,
+        title: t('expense_added_title'),
+        description: t('expense_added_desc', { description: description || category }),
     });
 
     // Reset form
@@ -86,22 +88,22 @@ export function AddExpenseForm() {
       <SheetTrigger asChild>
         <Card className="cursor-pointer hover:bg-accent transition-colors">
             <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Add New Expense</CardTitle>
+                <CardTitle>{t('add_new_expense')}</CardTitle>
                 <PlusCircle className="w-6 h-6 text-primary" />
             </CardHeader>
         </Card>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add a New Expense</SheetTitle>
+          <SheetTitle>{t('add_new_expense_title')}</SheetTitle>
           <SheetDescription>
-            Quickly log a new transaction to keep your budget up to date.
+            {t('add_new_expense_desc')}
           </SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="amount" className="text-right">
-              Amount
+              {t('amount')}
             </Label>
             <Input 
                 id="amount" 
@@ -115,16 +117,16 @@ export function AddExpenseForm() {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
-              Category
+              {t('category')}
             </Label>
             <Select onValueChange={(value: ExpenseCategory) => setCategory(value)} value={category} required>
               <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder={t('select_category_placeholder')} />
               </SelectTrigger>
               <SelectContent>
                 {expenseCategories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat}
+                    {t(`category_${cat.toLowerCase().replace(/ /g, '_')}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -132,11 +134,11 @@ export function AddExpenseForm() {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description" className="text-right">
-              Description
+              {t('description')}
             </Label>
             <Input 
                 id="description" 
-                placeholder="e.g., Lunch with colleagues" 
+                placeholder={t('description_placeholder')}
                 className="col-span-3"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -144,7 +146,7 @@ export function AddExpenseForm() {
           </div>
           {error && <p className="text-destructive text-sm text-center col-span-4">{error}</p>}
           <div className="flex justify-end">
-            <Button type="submit">Add Expense</Button>
+            <Button type="submit">{t('add_expense_button')}</Button>
           </div>
         </form>
       </SheetContent>

@@ -6,7 +6,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarInset,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -23,18 +22,20 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Button } from "../ui/button";
-
-const navItems = [
-  { href: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/roster", icon: Calendar, label: "Duty Roster" },
-  { href: "/budget", icon: Wallet, label: "Budget" },
-  { href: "/motivation", icon: HeartPulse, label: "Motivation" },
-  { href: "/profile", icon: User, label: "Profile" },
-];
+import { useLanguage } from "@/hooks/use-language";
 
 function MainNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { href: "/", icon: LayoutDashboard, label: t('nav_dashboard') },
+    { href: "/roster", icon: Calendar, label: t('nav_roster') },
+    { href: "/budget", icon: Wallet, label: t('nav_budget') },
+    { href: "/motivation", icon: HeartPulse, label: t('nav_motivation') },
+    { href: "/profile", icon: User, label: t('nav_profile') },
+  ];
+
   return (
     <SidebarMenu>
       {navItems.map((item) => (

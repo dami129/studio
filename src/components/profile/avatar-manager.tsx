@@ -13,6 +13,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/use-language";
 
 const predefinedAvatars = [
   "https://picsum.photos/seed/cartoon1/200",
@@ -36,6 +37,7 @@ export function AvatarManager({
   currentAvatar,
   onAvatarChange,
 }: AvatarManagerProps) {
+  const { t } = useLanguage();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,14 +59,14 @@ export function AvatarManager({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Change Profile Photo</DialogTitle>
+          <DialogTitle>{t('change_profile_photo_title')}</DialogTitle>
           <DialogDescription>
-            Choose a new avatar or upload your own photo.
+            {t('change_profile_photo_desc')}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <h3 className="mb-4 text-sm font-medium text-muted-foreground">
-            Select an Avatar
+            {t('select_an_avatar')}
           </h3>
           <div className="grid grid-cols-3 gap-4">
             {predefinedAvatars.map((src) => (
@@ -86,7 +88,7 @@ export function AvatarManager({
         </div>
         <div>
           <h3 className="mb-4 text-sm font-medium text-muted-foreground">
-            Or Upload Your Own
+            {t('or_upload_your_own')}
           </h3>
           <Button
             variant="outline"
@@ -94,7 +96,7 @@ export function AvatarManager({
             onClick={handleUploadClick}
           >
             <Upload className="mr-2 h-4 w-4" />
-            Upload from Gallery
+            {t('upload_from_gallery')}
           </Button>
           <input
             type="file"
