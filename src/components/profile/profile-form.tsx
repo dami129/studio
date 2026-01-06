@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 
 type User = {
   name: string;
+  email: string;
   hospital: string;
   ward: string;
   monthlyGoal: string;
@@ -71,6 +72,10 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
             <Label htmlFor="name">Full Name</Label>
             <Input id="name" value={formData.name} onChange={handleChange} />
           </div>
+           <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" value={formData.email} onChange={handleChange} />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="hospital">Hospital</Label>
             <Input id="hospital" value={formData.hospital} onChange={handleChange} />
@@ -80,7 +85,7 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
             <Input id="ward" value={formData.ward} onChange={handleChange} />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="goal">Monthly Goal</Label>
+            <Label htmlFor="monthlyGoal">Monthly Goal</Label>
             <Textarea id="monthlyGoal" value={formData.monthlyGoal} onChange={handleChange} />
           </div>
         </CardContent>
