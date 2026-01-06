@@ -7,6 +7,8 @@ import { mockExpenses } from "@/lib/data";
 type ExpensesContextType = {
   expenses: Expense[];
   addExpense: (expense: Omit<Expense, 'id'>) => void;
+  updateExpense: (id: string, updatedExpense: Partial<Omit<Expense, 'id'>>) => void;
+  deleteExpense: (id: string) => void;
 };
 
 const ExpensesContext = React.createContext<ExpensesContextType | undefined>(undefined);
@@ -38,12 +40,24 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
         ...expense,
         id: new Date().toISOString() + Math.random().toString(), // simple unique id
     };
-    setExpenses(prevExpenses => [newExpense, ...prevExpenses]);
+    setExpenses(prevExpenses => [newExpense, ...prevExpenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  };
+
+  const updateExpense = (id: string, updatedExpense: Partial<Omit<Expense, 'id'>>) => {
+    setExpenses(prevExpenses => 
+      prevExpenses.map(exp => 
+        exp.id === id ? { ...exp, ...updatedExpense } : exp
+      ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    );
+  };
+
+  const deleteExpense = (id: string) => {
+    setExpenses(prevExpenses => prevExpenses.filter(exp => exp.id !== id));
   };
 
 
   return (
-    <ExpensesContext.Provider value={{ expenses, addExpense }}>
+    <ExpensesContext.Provider value={{ expenses, addExpense, updateExpense, deleteExpense }}>
       {children}
     </ExpensesContext.Provider>
   );
