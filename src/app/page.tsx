@@ -29,7 +29,6 @@ const shiftTimes: Record<ShiftType, { start: { hour: number, minute: number }, e
   'Off (Day Off)': null,
 };
 
-
 function getSchedule(duties: Duty[]) {
   const now = new Date();
   const today = startOfToday();
@@ -37,24 +36,27 @@ function getSchedule(duties: Duty[]) {
   const upcomingDuties = duties
     .map(d => {
         const dutyDate = parseISO(d.date);
-        const shiftTime = shiftTimes[d.type];
-        if (!shiftTime) {
-            // For full day events like 'Off' or 'Leave', if the day is today or in the future, it could be 'next'.
-            // We'll consider its "end" as the end of that day for sorting purposes.
-            const endOfDay = setHours(setMinutes(setSeconds(dutyDate, 59), 59), 23);
-            return { ...d, dateObj: dutyDate, endDateTime: endOfDay };
-        }
-        
-        let endDateTime = setHours(setMinutes(dutyDate, shiftTime.end.minute), shiftTime.end.hour);
-        if (shiftTime.end.dayOffset) {
-            endDateTime = addDays(endDateTime, shiftTime.end.dayOffset);
+        const shiftInfo = shiftTimes[d.type];
+
+        if (!shiftInfo) {
+            // Handle full-day events like 'Leave' or 'Off'
+            const startDateTime = startOfToday(); // Treat as starting at the beginning of the day
+            const endDateTime = setHours(setMinutes(setSeconds(dutyDate, 59), 59), 23);
+            return { ...d, startDateTime, endDateTime };
         }
 
-        return { ...d, dateObj: dutyDate, endDateTime };
+        const startDateTime = setHours(setMinutes(dutyDate, shiftInfo.start.minute), shiftInfo.start.hour);
+        let endDateTime = setHours(setMinutes(dutyDate, shiftInfo.end.minute), shiftInfo.end.hour);
+
+        if (shiftInfo.end.dayOffset) {
+            endDateTime = addDays(endDateTime, shiftInfo.end.dayOffset);
+        }
+        
+        return { ...d, startDateTime, endDateTime };
     })
     .filter(d => isAfter(d.endDateTime, now)) // Filter out duties that have already ended
-    .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime()); // Sort by start date
-    
+    .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()); // Sort by the actual start time
+
   const pastDuties = duties
     .map(d => ({ ...d, dateObj: parseISO(d.date) }))
     .filter(d => isBefore(d.dateObj, today))
