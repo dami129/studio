@@ -10,43 +10,50 @@ import { Frown, Smile, Users } from "lucide-react";
 import { useDuties } from "@/hooks/use-duties";
 import { useIncome } from "@/hooks/use-income";
 import { useExpenses } from "@/hooks/use-expenses";
-import { isBefore, parseISO, startOfToday, isSameMonth, setHours, setMinutes, setSeconds, isAfter } from "date-fns";
+import { isBefore, parseISO, startOfToday, isSameMonth, setHours, setMinutes, setSeconds, isAfter, addDays } from "date-fns";
 import type { Duty, ShiftType } from "@/lib/types";
 import { useProfile } from "@/hooks/use-profile";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 import NurseSunriseCard from "@/components/motivation/nurse-sunrise-card";
 
-const shiftEndTimes: Record<ShiftType, { hour: number, minute: number } | null> = {
-  'Morning': { hour: 13, minute: 0 },
-  'Evening': { hour: 19, minute: 0 },
-  'Night': null, // Ends next day
-  'Overtime (Morning)': { hour: 13, minute: 0 },
-  'Overtime (Evening)': { hour: 19, minute: 0 },
-  'Overtime (Night)': null, // Ends next day
-  'Training': { hour: 17, minute: 0 }, // Assuming training ends at 5 PM
-  'Leave (CL/VL/SL)': null, // Full day
-  'Off (Day Off)': null, // Full day
+const shiftTimes: Record<ShiftType, { start: { hour: number, minute: number }, end: { hour: number, minute: number, dayOffset?: number } } | null> = {
+  'Morning': { start: { hour: 7, minute: 0 }, end: { hour: 13, minute: 0 } },
+  'Evening': { start: { hour: 13, minute: 0 }, end: { hour: 19, minute: 0 } },
+  'Night': { start: { hour: 19, minute: 0 }, end: { hour: 7, minute: 0, dayOffset: 1 } },
+  'Overtime (Morning)': { start: { hour: 7, minute: 0 }, end: { hour: 13, minute: 0 } },
+  'Overtime (Evening)': { start: { hour: 13, minute: 0 }, end: { hour: 19, minute: 0 } },
+  'Overtime (Night)': { start: { hour: 19, minute: 0 }, end: { hour: 7, minute: 0, dayOffset: 1 } },
+  'Training': { start: { hour: 8, minute: 0 }, end: { hour: 17, minute: 0 } },
+  'Leave (CL/VL/SL)': null,
+  'Off (Day Off)': null,
 };
+
 
 function getSchedule(duties: Duty[]) {
   const now = new Date();
   const today = startOfToday();
 
   const upcomingDuties = duties
-    .map(d => ({ ...d, dateObj: parseISO(d.date) }))
-    .filter(d => {
-      const shiftEndTimeInfo = shiftEndTimes[d.type];
-      if (shiftEndTimeInfo) {
-        const dutyEndDateTime = setSeconds(setMinutes(setHours(d.dateObj, shiftEndTimeInfo.hour), shiftEndTimeInfo.minute), 0);
-        return isAfter(dutyEndDateTime, now);
-      }
-      // For Night shifts or full-day events, we consider them "upcoming" if they are on or after today.
-      // A more precise night shift logic would check if it started on the previous day.
-      // For simplicity, we'll just check if the duty's start date is not in the past.
-      return isAfter(d.dateObj, today) || d.dateObj.getTime() === today.getTime();
+    .map(d => {
+        const dutyDate = parseISO(d.date);
+        const shiftTime = shiftTimes[d.type];
+        if (!shiftTime) {
+            // For full day events like 'Off' or 'Leave', if the day is today or in the future, it could be 'next'.
+            // We'll consider its "end" as the end of that day for sorting purposes.
+            const endOfDay = setHours(setMinutes(setSeconds(dutyDate, 59), 59), 23);
+            return { ...d, dateObj: dutyDate, endDateTime: endOfDay };
+        }
+        
+        let endDateTime = setHours(setMinutes(dutyDate, shiftTime.end.minute), shiftTime.end.hour);
+        if (shiftTime.end.dayOffset) {
+            endDateTime = addDays(endDateTime, shiftTime.end.dayOffset);
+        }
+
+        return { ...d, dateObj: dutyDate, endDateTime };
     })
-    .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
+    .filter(d => isAfter(d.endDateTime, now)) // Filter out duties that have already ended
+    .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime()); // Sort by start date
     
   const pastDuties = duties
     .map(d => ({ ...d, dateObj: parseISO(d.date) }))
