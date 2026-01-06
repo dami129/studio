@@ -6,7 +6,7 @@ import { DutyCard } from "@/components/dashboard/duty-card";
 import { BudgetCard } from "@/components/dashboard/budget-card";
 import { GoalCard } from "@/components/dashboard/goal-card";
 import { QuoteCard } from "@/components/dashboard/quote-card";
-import { Frown, Smile, Heart, Users } from "lucide-react";
+import { Frown, Smile, Users } from "lucide-react";
 import { useDuties } from "@/hooks/use-duties";
 import { useIncome } from "@/hooks/use-income";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -15,6 +15,7 @@ import type { Duty } from "@/lib/types";
 import { useProfile } from "@/hooks/use-profile";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
+import NurseSunriseCard from "@/components/motivation/nurse-sunrise-card";
 
 function getSchedule(duties: Duty[]) {
   const today = startOfToday();
@@ -83,6 +84,10 @@ export default function Home() {
         <p className="text-muted-foreground mt-1">
           {t('dashboard_subtitle')}
         </p>
+      </div>
+
+      <div className="lg:col-span-3">
+        <NurseSunriseCard />
       </div>
 
       <DutyCard schedule={schedule} />
