@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Schedule, ShiftType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,9 @@ const shiftColors: Record<ShiftType, string> = {
 
 function ShiftBadge({ type }: { type: ShiftType }) {
   const { t } = useLanguage();
+  const getTranslationKey = (shift: ShiftType): string => {
+    return `shift_${shift.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_`;
+  }
   return (
     <span
       className={cn(
@@ -26,7 +30,7 @@ function ShiftBadge({ type }: { type: ShiftType }) {
         shiftColors[type] || "bg-gray-200 text-gray-800"
       )}
     >
-      {t(`shift_${type.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
+      {t(getTranslationKey(type))}
     </span>
   );
 }

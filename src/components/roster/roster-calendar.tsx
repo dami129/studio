@@ -87,7 +87,7 @@ const RosterCalendar = React.forwardRef<
   const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
 
   const getTranslationKey = (shift: ShiftType): string => {
-    return `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+    return `shift_${shift.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_`;
   }
   
   return (
