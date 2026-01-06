@@ -87,6 +87,12 @@ const RosterCalendar = React.forwardRef<
   const selectedDateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
   const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
 
+  const getTranslationKey = (shift: ShiftType): string => {
+    if (shift === 'Off (Day Off)') return 'shift_day_off';
+    if (shift === 'Leave (CL/VL/SL)') return 'shift_casual_leave';
+    return `shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+  }
+
 
   return (
     <>
@@ -142,7 +148,7 @@ const RosterCalendar = React.forwardRef<
                         )}
                         variant="default"
                       >
-                        {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
+                        {t(getTranslationKey(shift))}
                       </Badge>
                     ))}
                   </div>
@@ -176,7 +182,7 @@ const RosterCalendar = React.forwardRef<
                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                     })}
                   >
-                    {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
+                    {t(getTranslationKey(shift))}
                   </Button>
                 ))}
               </div>
@@ -193,7 +199,7 @@ const RosterCalendar = React.forwardRef<
                                 variant="outline"
                                 className="w-full justify-start"
                             >
-                                {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
+                                {t(getTranslationKey(shift))}
                             </Button>
                         ))}
                     </div>
@@ -212,7 +218,7 @@ const RosterCalendar = React.forwardRef<
                       'ring-2 ring-offset-2 ring-ring': shiftsForSelectedDate.includes(shift)
                     })}
                   >
-                    {t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`)}
+                    {t(getTranslationKey(shift))}
                   </Button>
                 ))}
               </div>
