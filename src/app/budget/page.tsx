@@ -11,7 +11,6 @@ import { IncomeCard } from "@/components/budget/income-card";
 import { isSameMonth, parseISO, isToday } from "date-fns";
 import { DailyExpenses } from "@/components/budget/daily-expenses";
 import { useLanguage } from "@/hooks/use-language";
-import FloatingCalculator from "@/components/calculator/floating-calculator";
 
 export default function BudgetPage() {
   const { expenses } = useExpenses();
@@ -74,7 +73,6 @@ export default function BudgetPage() {
             <BudgetSummaryChart expenses={monthlyExpenses} />
         </div>
       </div>
-      <FloatingCalculator />
     </div>
   );
 }
