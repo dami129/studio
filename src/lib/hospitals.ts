@@ -63,7 +63,7 @@ export const hospitals: string[] = [
     "Base Hospital Marawila",
     "Base Hospital Matale",
     "Base Hospital Mawanella",
- }^{\prime}  "Base Hospital Moneragala",
+    "Base Hospital Moneragala",
     "Base Hospital Puttalam",
     "Base Hospital Tangalle",
     "Base Hospital Tellippalai",
