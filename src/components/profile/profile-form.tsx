@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
+import { Combobox } from "../ui/combobox";
+import { hospitals } from "@/lib/hospitals";
 
 type User = {
   name: string;
@@ -45,6 +47,10 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
     setFormData(prev => ({ ...prev, language: value }));
   };
 
+  const handleHospitalChange = (value: string) => {
+    setFormData(prev => ({ ...prev, hospital: value }));
+  };
+
   const handleSwitchChange = (id: keyof User['notifications']) => {
     setFormData(prev => ({
       ...prev,
@@ -78,7 +84,14 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="hospital">Hospital</Label>
-            <Input id="hospital" value={formData.hospital} onChange={handleChange} />
+            <Combobox
+              items={hospitals.map(h => ({ label: h, value: h }))}
+              value={formData.hospital}
+              onChange={handleHospitalChange}
+              placeholder="Select a hospital..."
+              searchPlaceholder="Search hospitals..."
+              noResultsMessage="No hospital found."
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="ward">Ward/Unit</Label>
