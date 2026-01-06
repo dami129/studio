@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Bot } from "lucide-react";
+import { Sparkles, Bot, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -41,20 +41,34 @@ export function QuoteCard({ feelingOptions }: QuoteCardProps) {
   const { t } = useLanguage();
   const [feeling, setFeeling] = useState("teamwork");
   const [quote, setQuote] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleGenerateQuote = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!feeling || !QUOTES[feeling]) {
-      setError(t('quote_error_feeling'));
-      return;
+  const generateQuote = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      setQuote("");
+  
+      // Simulate API delay
+      await new Promise(res => setTimeout(res, 600));
+  
+      const quotes = QUOTES[feeling];
+  
+      if (!quotes || quotes.length === 0) {
+        throw new Error("No quotes found");
+      }
+  
+      const randomQuote =
+        quotes[Math.floor(Math.random() * quotes.length)];
+  
+      setQuote(randomQuote);
+    } catch (err) {
+      console.error(err);
+      setError("Unable to generate quote. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    const quotesForFeeling = QUOTES[feeling];
-    const randomIndex = Math.floor(Math.random() * quotesForFeeling.length);
-    setQuote(quotesForFeeling[randomIndex]);
   };
 
   return (
@@ -69,13 +83,15 @@ export function QuoteCard({ feelingOptions }: QuoteCardProps) {
         {quote ? (
           <div className="text-center p-6 bg-accent/50 rounded-lg">
             <p className="text-lg md:text-xl font-semibold text-accent-foreground/90">
-              "{quote}"
+              “{quote}”
             </p>
           </div>
         ) : (
-          <p className="text-muted-foreground text-center">
-            {t('get_personalized_quote_prompt')}
-          </p>
+          !loading && !error && (
+            <p className="text-muted-foreground text-center">
+              {t('get_personalized_quote_prompt')}
+            </p>
+          )
         )}
 
         {error && (
@@ -85,7 +101,7 @@ export function QuoteCard({ feelingOptions }: QuoteCardProps) {
             </Alert>
         )}
 
-        <form onSubmit={handleGenerateQuote} className="space-y-4">
+        <div className="space-y-4">
           <div className="flex flex-col md:flex-row items-center gap-4">
             <div className="w-full md:flex-1">
               <Select name="recentActivity" onValueChange={setFeeling} value={feeling} required>
@@ -104,12 +120,21 @@ export function QuoteCard({ feelingOptions }: QuoteCardProps) {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full md:w-auto">
-              <Sparkles className="mr-2 h-4 w-4" />
-              {t('generate_my_quote')}
+            <Button onClick={generateQuote} disabled={loading} className="w-full md:w-auto">
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  {t('generate_my_quote')}
+                </>
+              )}
             </Button>
           </div>
-        </form>
+        </div>
       </CardContent>
     </Card>
   );
