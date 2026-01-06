@@ -51,7 +51,7 @@ export function Combobox({
           className={cn("w-full justify-between", className)}
         >
           {value
-            ? items.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label
+            ? items.find((item) => item.value === value)?.label
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -69,14 +69,19 @@ export function Combobox({
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    onChange(currentValue.toLowerCase() === value.toLowerCase() ? "" : item.value)
+                    const selectedItem = items.find(
+                      (i) => i.value.toLowerCase() === currentValue.toLowerCase()
+                    );
+                    if (selectedItem) {
+                      onChange(selectedItem.value === value ? "" : selectedItem.value);
+                    }
                     setOpen(false)
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value.toLowerCase() === item.value.toLowerCase() ? "opacity-100" : "opacity-0"
+                      value === item.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {item.label}
