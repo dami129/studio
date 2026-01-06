@@ -13,6 +13,7 @@ import { useExpenses } from "@/hooks/use-expenses";
 import { isAfter, isBefore, parseISO, startOfToday, isSameMonth } from "date-fns";
 import type { Duty } from "@/lib/types";
 import { useProfile } from "@/hooks/use-profile";
+import { useToast } from "@/hooks/use-toast";
 
 function getSchedule(duties: Duty[]) {
   const today = startOfToday();
@@ -39,6 +40,20 @@ export default function Home() {
   const { totalIncome } = useIncome();
   const { expenses } = useExpenses();
   const { user, updateUser } = useProfile();
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    if (user.notifications.dailyMotivation) {
+      // Set a timeout to allow the main page to render first
+      const timer = setTimeout(() => {
+        toast({
+          title: "🌟 Your Daily Motivation",
+          description: "Remember to take a moment for yourself today. You're doing an amazing job!",
+        });
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [user.notifications.dailyMotivation, toast]);
   
   const schedule = getSchedule(duties);
   
