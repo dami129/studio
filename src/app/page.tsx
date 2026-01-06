@@ -10,7 +10,7 @@ import { Frown, Smile, Users } from "lucide-react";
 import { useDuties } from "@/hooks/use-duties";
 import { useIncome } from "@/hooks/use-income";
 import { useExpenses } from "@/hooks/use-expenses";
-import { isBefore, parseISO, startOfToday, isSameMonth, setHours, setMinutes, setSeconds, isAfter, addDays } from "date-fns";
+import { isBefore, parseISO, startOfToday, isSameMonth, setHours, setMinutes, setSeconds, isAfter, addDays, formatDistanceToNow, format } from "date-fns";
 import type { Duty, ShiftType } from "@/lib/types";
 import { useProfile } from "@/hooks/use-profile";
 import { useToast } from "@/hooks/use-toast";
@@ -31,7 +31,6 @@ const shiftTimes: Record<ShiftType, { start: { hour: number, minute: number }, e
 
 function getSchedule(duties: Duty[]) {
   const now = new Date();
-  const today = startOfToday();
 
   const upcomingDuties = duties
     .map(d => {
@@ -58,9 +57,27 @@ function getSchedule(duties: Duty[]) {
     .sort((a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()); // Sort by the actual start time
 
   const pastDuties = duties
-    .map(d => ({ ...d, dateObj: parseISO(d.date) }))
-    .filter(d => isBefore(d.dateObj, today))
-    .sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
+    .map(d => {
+        const dutyDate = parseISO(d.date);
+        const shiftInfo = shiftTimes[d.type];
+
+        if (!shiftInfo) {
+            const startDateTime = setHours(setMinutes(setSeconds(dutyDate, 0), 0), 0);
+            const endDateTime = setHours(setMinutes(setSeconds(dutyDate, 59), 59), 23);
+            return { ...d, startDateTime, endDateTime };
+        }
+        
+        const startDateTime = setHours(setMinutes(dutyDate, shiftInfo.start.minute), shiftInfo.start.hour);
+        let endDateTime = setHours(setMinutes(dutyDate, shiftInfo.end.minute), shiftInfo.end.hour);
+        
+        if (shiftInfo.end.dayOffset) {
+            endDateTime = addDays(endDateTime, shiftInfo.end.dayOffset);
+        }
+
+        return { ...d, dateObj: dutyDate, startDateTime, endDateTime };
+    })
+    .filter(d => isBefore(d.endDateTime, now))
+    .sort((a, b) => b.endDateTime.getTime() - a.endDateTime.getTime());
   
   return {
     next: upcomingDuties.length > 0 ? { type: upcomingDuties[0].type, date: upcomingDuties[0].date } : null,
@@ -76,10 +93,11 @@ export default function Home() {
   const { expenses } = useExpenses();
   const { user, updateUser } = useProfile();
   const { toast } = useToast();
+  
+  const schedule = getSchedule(duties);
 
   React.useEffect(() => {
     if (user.notifications.dailyMotivation) {
-      // Set a timeout to allow the main page to render first
       const timer = setTimeout(() => {
         toast({
           title: t('daily_motivation_title'),
@@ -89,8 +107,21 @@ export default function Home() {
       return () => clearTimeout(timer);
     }
   }, [user.notifications.dailyMotivation, toast, t]);
+
+  React.useEffect(() => {
+    if (user.notifications.dutyReminders && schedule.next) {
+      const nextDutyDate = parseISO(schedule.next.date);
+      const message = `Your next duty is a ${t(`shift_${schedule.next.type}`)} shift on ${format(nextDutyDate, "EEE, MMM d")} (${formatDistanceToNow(nextDutyDate, { addSuffix: true })}).`;
+      const timer = setTimeout(() => {
+        toast({
+          title: "Upcoming Duty Reminder",
+          description: message,
+        });
+      }, 1500); // Delay slightly longer than motivation toast
+      return () => clearTimeout(timer);
+    }
+  }, [user.notifications.dutyReminders, schedule.next, toast, t]);
   
-  const schedule = getSchedule(duties);
   
   const currentMonth = new Date();
   const monthlyExpenses = expenses.filter(expense => isSameMonth(parseISO(expense.date), currentMonth));
