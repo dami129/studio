@@ -11,7 +11,7 @@ export default function FloatingCalculator() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 bg-primary text-primary-foreground p-4 rounded-full shadow-lg z-40 transition-transform hover:scale-110"
+        className="fixed top-6 right-6 bg-primary text-primary-foreground p-4 rounded-full shadow-lg z-40 transition-transform hover:scale-110"
         aria-label="Open Calculator"
       >
         <CalculatorIcon className="w-6 h-6" />
