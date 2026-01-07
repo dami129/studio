@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -33,19 +34,26 @@ const ProfileContext = React.createContext<ProfileContextType | undefined>(
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useLocalStorage<UserProfile>('userProfile', initialUser);
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const displayUser = isClient ? user : initialUser;
 
   const updateUser = (newUserData: Partial<UserProfile>) => {
     setUser((prevUser) => ({ ...prevUser, ...newUserData }));
   };
   
-  const avatar = user.avatar;
+  const avatar = isClient ? user.avatar : initialUser.avatar;
   const updateAvatar = (newAvatar: string) => {
     updateUser({ avatar: newAvatar });
   };
 
   const value = React.useMemo(
-    () => ({ user, updateUser, avatar, updateAvatar }),
-    [user, updateUser, avatar, updateAvatar]
+    () => ({ user: displayUser, updateUser, avatar, updateAvatar }),
+    [displayUser, updateUser, avatar, updateAvatar]
   );
 
   return (
