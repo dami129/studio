@@ -1,8 +1,11 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import type { Income, IncomeSource } from "@/lib/types";
-import { mockIncome } from "@/lib/data";
+import * as React from 'react';
+import type { Income, IncomeSource } from '@/lib/types';
+import { useUser } from '@/firebase';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
+import { mockIncome } from '@/lib/data';
 
 type IncomeContextType = {
   income: Income;
@@ -10,56 +13,61 @@ type IncomeContextType = {
   totalIncome: number;
 };
 
-const IncomeContext = React.createContext<IncomeContextType | undefined>(undefined);
+const IncomeContext = React.createContext<IncomeContextType | undefined>(
+  undefined
+);
 
 export function IncomeProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useUser();
+  const firestore = useFirestore();
   const [income, setIncome] = React.useState<Income>(mockIncome);
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  const incomeDocRef = React.useMemo(() => user && firestore ? doc(firestore, 'users', user.uid, 'data', 'income') : null, [user, firestore]);
 
   React.useEffect(() => {
-    try {
-      const savedIncome = localStorage.getItem('income');
-      if (savedIncome) {
-        const parsedIncome = JSON.parse(savedIncome);
-        // Ensure all keys are present, falling back to mockIncome defaults
-        const validatedIncome = { ...mockIncome, ...parsedIncome };
+    if (!incomeDocRef) {
+        setIncome(mockIncome);
+        return
+    };
+
+    const unsubscribe = onSnapshot(incomeDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const validatedIncome = { ...mockIncome, ...docSnap.data() };
         setIncome(validatedIncome);
+      } else {
+        // One-time write for mock data if the document doesn't exist
+        setDoc(incomeDocRef, mockIncome);
+        setIncome(mockIncome);
       }
-    } catch (error) {
-      console.error("Failed to parse income from localStorage", error);
-      setIncome(mockIncome);
-    }
-    setIsLoaded(true);
-  }, []);
+    });
 
-  React.useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('income', JSON.stringify(income));
-    }
-  }, [income, isLoaded]);
+    return () => unsubscribe();
+  }, [incomeDocRef]);
+
 
   const updateIncome = (source: IncomeSource, amount: number) => {
-    setIncome(prevIncome => ({
-      ...prevIncome,
-      [source]: amount,
-    }));
+    if (!incomeDocRef) return;
+    const newIncome = { ...income, [source]: amount };
+    setDoc(incomeDocRef, newIncome, { merge: true });
   };
 
   const totalIncome = React.useMemo(() => {
-    return Object.values(income).reduce((sum, amount) => sum + (Number(amount) || 0), 0);
+    return Object.values(income).reduce(
+      (sum, amount) => sum + (Number(amount) || 0),
+      0
+    );
   }, [income]);
 
+  const value = { income, updateIncome, totalIncome };
+
   return (
-    <IncomeContext.Provider value={{ income, updateIncome, totalIncome }}>
-      {children}
-    </IncomeContext.Provider>
+    <IncomeContext.Provider value={value}>{children}</IncomeContext.Provider>
   );
 }
 
 export function useIncome() {
   const context = React.useContext(IncomeContext);
   if (context === undefined) {
-    throw new Error("useIncome must be used within an IncomeProvider");
+    throw new Error('useIncome must be used within an IncomeProvider');
   }
   return context;
 }

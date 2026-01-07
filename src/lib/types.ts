@@ -10,14 +10,13 @@ export type ShiftType =
   | 'Overtime (Night)';
 
 export type Duty = {
+  id: string; // composite key like `2024-08-01_Morning`
   date: string; // "yyyy-MM-dd"
   type: ShiftType;
-  hospital?: string;
-  ward?: string;
 };
 
 export type Schedule = {
-  next: { type: ShiftType; date: string } | null;
+  next: { type: ShiftType; date: string, startDateTime: Date; } | null;
   previous: { type: ShiftType; date: string } | null;
 };
 
@@ -34,6 +33,7 @@ export type UserProfile = {
   monthlyGoal: string;
   language: string;
   theme: "light" | "dark" | "system";
+  avatar: string;
   notifications: {
       dutyReminders: boolean;
       budgetAlerts: boolean;

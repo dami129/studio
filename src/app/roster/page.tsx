@@ -3,9 +3,9 @@
 import * as React from "react";
 import { RosterCalendar } from "@/components/roster/roster-calendar";
 import { RosterSummary } from "@/components/roster/roster-summary";
-import type { ShiftType, ShiftColors } from "@/lib/types";
+import type { ShiftType, ShiftColors, Duty } from "@/lib/types";
 import { RosterSettings } from "@/components/roster/roster-settings";
-import { getDaysInMonth, startOfMonth, getDay } from "date-fns";
+import { getDaysInMonth, startOfMonth, getDay, format } from "date-fns";
 import { useDuties } from "@/hooks/use-duties";
 import { Button } from "@/components/ui/button";
 import { Download, Share2 } from "lucide-react";
@@ -16,7 +16,7 @@ import FloatingCalculator from "@/components/calculator/floating-calculator";
 
 export default function RosterPage() {
   const { t } = useLanguage();
-  const { duties, setDuties } = useDuties();
+  const { duties, updateDuty } = useDuties();
   const [shiftColors, setShiftColors] = React.useState<ShiftColors>({
     Morning: "bg-blue-200 text-blue-800 hover:bg-blue-200/80",
     Evening: "bg-orange-200 text-orange-800 hover:bg-orange-200/80",
@@ -33,27 +33,8 @@ export default function RosterPage() {
   const calendarRef = React.useRef<HTMLDivElement>(null);
 
   const handleUpdateDuty = (date: string, type: ShiftType) => {
-    setDuties(prevDuties => {
-      const dutyExists = prevDuties.some(d => d.date === date && d.type === type);
-
-      if (dutyExists) {
-        // Remove the duty if it already exists
-        return prevDuties.filter(d => !(d.date === date && d.type === type));
-      } else {
-        // Add the new duty
-        let newDuties = [...prevDuties];
-        const isNormalShift = ['Morning', 'Evening', 'Night'].includes(type);
-
-        if (isNormalShift) {
-          // If adding a normal shift, remove any other normal shifts on the same day
-          const otherNormalShifts: ShiftType[] = ['Morning', 'Evening', 'Night'];
-          newDuties = newDuties.filter(d => !(d.date === date && otherNormalShifts.includes(d.type)));
-        }
-        
-        newDuties.push({ date, type });
-        return newDuties;
-      }
-    });
+    // The logic is now handled by the useDuties hook
+    updateDuty(date, type);
   };
 
   const handleColorChange = (shiftType: ShiftType, colorClass: string) => {

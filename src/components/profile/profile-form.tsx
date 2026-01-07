@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 type ProfileFormProps = {
   user: UserProfile;
-  onSave: (user: UserProfile) => void;
+  onSave: (user: Partial<UserProfile>) => void;
 };
 
 const wards = [
@@ -35,7 +35,7 @@ const wards = [
 
 export function ProfileForm({ user, onSave }: ProfileFormProps) {
   const { t } = useLanguage();
-  const [formData, setFormData] = React.useState(user);
+  const [formData, setFormData] = React.useState<UserProfile>(user);
 
   React.useEffect(() => {
     setFormData(user);
@@ -47,7 +47,7 @@ export function ProfileForm({ user, onSave }: ProfileFormProps) {
   };
   
   const handleSelectChange = (id: keyof UserProfile, value: string) => {
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData(prev => ({ ...prev, [id]: value as any }));
   };
 
   const handleSwitchChange = (id: keyof UserProfile['notifications']) => {

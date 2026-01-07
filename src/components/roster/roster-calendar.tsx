@@ -51,7 +51,7 @@ const RosterCalendar = React.forwardRef<
   const dutiesByDate = React.useMemo(() => {
     const map = new Map<string, ShiftType[]>();
     duties.forEach(duty => {
-      const dutyDate = new Date(duty.date + 'T00:00:00');
+      const dutyDate = new Date(duty.date + 'T00:00:00'); // Ensure local timezone
       const localDateStr = format(dutyDate, "yyyy-MM-dd");
       if (!map.has(localDateStr)) {
         map.set(localDateStr, []);
@@ -85,7 +85,8 @@ const RosterCalendar = React.forwardRef<
   const selectedDateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
   const shiftsForSelectedDate = dutiesByDate.get(selectedDateString) || [];
   
-  const getShiftLabel = (shift: ShiftType) => t(`shift_${shift}`);
+  const getShiftLabel = (shift: ShiftType) => t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`);
+
 
   return (
     <>
