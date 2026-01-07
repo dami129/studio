@@ -1,0 +1,14 @@
+diff --git a/node_modules/vaul/package.json b/node_modules/vaul/package.json
+index 0a7905a..b7737a3 100644
+--- a/node_modules/vaul/package.json
++++ b/node_modules/vaul/package.json
+@@ -43,6 +43,6 @@
+   "peerDependencies": {
+     "react": "^16.8 || ^17.0 || ^18.0",
+     "react-dom": "^16.8 || ^17.0 || ^18.0"
+   },
+   "dependencies": {
+     "@radix-ui/react-dialog": "^1.0.5",
+     "clsx": "^2.0.0"
+   }
+ }
