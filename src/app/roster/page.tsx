@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -5,7 +6,7 @@ import { RosterCalendar } from "@/components/roster/roster-calendar";
 import { RosterSummary } from "@/components/roster/roster-summary";
 import type { ShiftType, ShiftColors, Duty } from "@/lib/types";
 import { RosterSettings } from "@/components/roster/roster-settings";
-import { getDaysInMonth, startOfMonth, getDay, format } from "date-fns";
+import { getDaysInMonth, startOfMonth, getDay, format, isSameMonth, parseISO } from "date-fns";
 import { useDuties } from "@/hooks/use-duties";
 import { Button } from "@/components/ui/button";
 import { Download, Share2 } from "lucide-react";
@@ -13,6 +14,37 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useLanguage } from "@/hooks/use-language";
 import FloatingCalculator from "@/components/calculator/floating-calculator";
+
+function calculateMonthlySummary(duties: Duty[], currentMonth: Date) {
+  if (!currentMonth || !(currentMonth instanceof Date) || isNaN(currentMonth.getTime())) {
+    return {
+      totalDuties: 0,
+      overtimeCount: 0,
+      offDaysCount: 0,
+    };
+  }
+  
+  const monthlyDuties = duties.filter(d =>
+    isSameMonth(parseISO(d.date), currentMonth)
+  );
+
+  const normalDuties = monthlyDuties.filter(d =>
+    ['Morning', 'Evening', 'Night'].includes(d.type)
+  );
+
+  const overtimeDuties = monthlyDuties.filter(d =>
+    d.type.startsWith('Overtime')
+  );
+
+  const offDays = monthlyDuties.filter(d => d.type === 'Off (Day Off)');
+
+  return {
+    totalDuties: normalDuties.length,
+    overtimeCount: overtimeDuties.length,
+    offDaysCount: offDays.length,
+  };
+}
+
 
 export default function RosterPage() {
   const { t } = useLanguage();
@@ -33,7 +65,6 @@ export default function RosterPage() {
   const calendarRef = React.useRef<HTMLDivElement>(null);
 
   const handleUpdateDuty = (date: string, type: ShiftType) => {
-    // The logic is now handled by the useDuties hook
     updateDuty(date, type);
   };
 
@@ -47,6 +78,13 @@ export default function RosterPage() {
   const startDay = getDay(month);
   const emptyCells = Array(startDay).fill(undefined);
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const summary = React.useMemo(() => calculateMonthlySummary(duties, month), [duties, month]);
+  const summaryItems = [
+      { label: "total_duties", value: summary.totalDuties, emoji: "🩺" },
+      { label: "overtime", value: summary.overtimeCount, emoji: "💪" },
+      { label: "off_days", value: summary.offDaysCount, emoji: "😌" },
+  ];
 
   const captureCalendar = async () => {
     if (!calendarRef.current) return null;
@@ -121,7 +159,7 @@ export default function RosterPage() {
           />
         </div>
         <div className="space-y-6">
-          <RosterSummary duties={duties} month={month} />
+          <RosterSummary items={summaryItems} />
           <RosterSettings 
             shiftColors={shiftColors}
             onColorChange={handleColorChange}
