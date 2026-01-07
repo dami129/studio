@@ -3,8 +3,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppShell } from '@/components/layout/app-shell';
 import { DutiesProvider } from '@/hooks/use-duties';
 import { ExpensesProvider } from '@/hooks/use-expenses';
 import { IncomeProvider } from '@/hooks/use-income';
@@ -12,6 +10,8 @@ import { ProfileProvider } from '@/hooks/use-profile';
 import { LanguageProvider } from '@/hooks/use-language';
 import { ThemeProvider } from '@/components/layout/theme-provider';
 import MobileBottomNav from '@/components/layout/mobile-bottom-nav';
+import DesktopSidebar from '@/components/layout/desktop-sidebar';
+
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -39,14 +39,13 @@ export default function RootLayout({
               <DutiesProvider>
                 <ExpensesProvider>
                   <IncomeProvider>
-                    <SidebarProvider>
-                      <div className="pb-16 md:pb-0">
-                        <AppShell>{children}</AppShell>
-                      </div>
-                      <div className="md:hidden">
+                    <div className="flex min-h-screen">
+                        <DesktopSidebar />
+                        <main className="flex-1 p-4 sm:p-6 pb-20 md:pb-6">
+                            {children}
+                        </main>
                         <MobileBottomNav />
-                      </div>
-                    </SidebarProvider>
+                    </div>
                   </IncomeProvider>
                 </ExpensesProvider>
               </DutiesProvider>
