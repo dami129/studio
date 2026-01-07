@@ -164,8 +164,8 @@ export default function RosterPage() {
         <div className="space-y-6">
           <RosterSummary items={summaryItems} />
           <RosterSettings 
-            initialColors={shiftColors}
-            onSave={handleColorSave}
+            shiftColors={shiftColors}
+            onColorsChange={setShiftColors}
           />
         </div>
       </div>

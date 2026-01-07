@@ -9,7 +9,6 @@ import type { ShiftType, ShiftColors } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Palette } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
-import { Button } from "../ui/button";
 
 const colorOptions = [
     { name: "Blue", class: "bg-blue-200 text-blue-800 hover:bg-blue-200/80" },
@@ -24,32 +23,19 @@ const colorOptions = [
 ];
 
 export function RosterSettings({
-  initialColors,
-  onSave,
+  shiftColors,
+  onColorsChange,
 }: {
-  initialColors: ShiftColors;
-  onSave: (newColors: ShiftColors) => void;
+  shiftColors: ShiftColors;
+  onColorsChange: (newColors: ShiftColors) => void;
 }) {
   const { t } = useLanguage();
-  const [localColors, setLocalColors] = React.useState(initialColors);
-  const [hasChanges, setHasChanges] = React.useState(false);
-
-  React.useEffect(() => {
-    setLocalColors(initialColors);
-    setHasChanges(false);
-  }, [initialColors]);
 
   const handleColorChange = (shiftType: ShiftType, colorClass: string) => {
-    setLocalColors((prev) => ({ ...prev, [shiftType]: colorClass }));
-    setHasChanges(true);
+    onColorsChange({ ...shiftColors, [shiftType]: colorClass });
   };
-  
-  const handleSave = () => {
-    onSave(localColors);
-    setHasChanges(false);
-  }
 
-  const shiftTypes = Object.keys(localColors) as ShiftType[];
+  const shiftTypes = Object.keys(shiftColors) as ShiftType[];
 
   return (
     <Card>
@@ -65,7 +51,7 @@ export function RosterSettings({
           <div key={shiftType} className="flex items-center justify-between">
             <Label>{t(`shift_${shiftType}`)}</Label>
             <Select
-              value={localColors[shiftType]}
+              value={shiftColors[shiftType]}
               onValueChange={(value) => handleColorChange(shiftType, value)}
             >
               <SelectTrigger className="w-[180px]">
@@ -89,11 +75,6 @@ export function RosterSettings({
             </Select>
           </div>
         ))}
-        {hasChanges && (
-            <div className="flex justify-end pt-4">
-                <Button onClick={handleSave}>{t('save_changes')}</Button>
-            </div>
-        )}
       </CardContent>
     </Card>
   );
