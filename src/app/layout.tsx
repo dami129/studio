@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -42,7 +43,9 @@ export default function RootLayout({
                       <div className="pb-16 md:pb-0">
                         <AppShell>{children}</AppShell>
                       </div>
-                      <MobileBottomNav />
+                      <div className="md:hidden">
+                        <MobileBottomNav />
+                      </div>
                     </SidebarProvider>
                   </IncomeProvider>
                 </ExpensesProvider>
