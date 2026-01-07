@@ -40,11 +40,10 @@ function ComboboxContent({
     items,
     value,
     onChange,
-    placeholder,
     searchPlaceholder,
     noResultsMessage,
     onSelect
-}: Omit<ComboboxProps, 'className'> & {onSelect: () => void}) {
+}: Omit<ComboboxProps, 'className' | 'placeholder'> & {onSelect: () => void}) {
     return (
         <Command>
             <CommandInput 
@@ -58,12 +57,7 @@ function ComboboxContent({
                     key={item.value}
                     value={item.value}
                     onSelect={(currentValue) => {
-                        const selectedItem = items.find(
-                        (i) => i.value.toLowerCase() === currentValue.toLowerCase()
-                        );
-                        if (selectedItem) {
-                        onChange(selectedItem.value === value ? "" : selectedItem.value);
-                        }
+                        onChange(currentValue === value ? "" : currentValue);
                         onSelect();
                     }}
                     >
@@ -94,7 +88,7 @@ export function Combobox({
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
 
-  const selectedLabel = items.find((item) => item.value === value)?.label;
+  const selectedLabel = items.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label;
 
   if (isMobile) {
     return (
@@ -110,7 +104,6 @@ export function Combobox({
                         items={items}
                         value={value}
                         onChange={onChange}
-                        placeholder={placeholder}
                         searchPlaceholder={searchPlaceholder}
                         noResultsMessage={noResultsMessage}
                         onSelect={() => setOpen(false)}
@@ -139,7 +132,6 @@ export function Combobox({
             items={items}
             value={value}
             onChange={onChange}
-            placeholder={placeholder}
             searchPlaceholder={searchPlaceholder}
             noResultsMessage={noResultsMessage}
             onSelect={() => setOpen(false)}
