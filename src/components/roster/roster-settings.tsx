@@ -1,6 +1,7 @@
 
 "use client"
 
+import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,6 +9,7 @@ import type { ShiftType, ShiftColors } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Palette } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import { Button } from "../ui/button";
 
 const colorOptions = [
     { name: "Blue", class: "bg-blue-200 text-blue-800 hover:bg-blue-200/80" },
@@ -21,44 +23,78 @@ const colorOptions = [
     { name: "Red", class: "bg-red-200 text-red-800 hover:bg-red-200/80" },
 ];
 
-export function RosterSettings({ shiftColors, onColorChange }: { shiftColors: ShiftColors, onColorChange: (shiftType: ShiftType, colorClass: string) => void }) {
-    const { t } = useLanguage();
-    const shiftTypes = Object.keys(shiftColors) as ShiftType[];
+export function RosterSettings({
+  initialColors,
+  onSave,
+}: {
+  initialColors: ShiftColors;
+  onSave: (newColors: ShiftColors) => void;
+}) {
+  const { t } = useLanguage();
+  const [localColors, setLocalColors] = React.useState(initialColors);
+  const [hasChanges, setHasChanges] = React.useState(false);
 
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Palette className="w-5 h-5 text-primary" />
-                    <span>{t('roster_settings_title')}</span>
-                </CardTitle>
-                <CardDescription>{t('roster_settings_desc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {shiftTypes.map(shiftType => (
-                    <div key={shiftType} className="flex items-center justify-between">
-                        <Label>{t(`shift_${shiftType}`)}</Label>
-                        <Select
-                            value={shiftColors[shiftType]}
-                            onValueChange={(value) => onColorChange(shiftType, value)}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder={t('select_color_placeholder')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {colorOptions.map(color => (
-                                    <SelectItem key={color.class} value={color.class}>
-                                        <div className="flex items-center gap-2">
-                                            <div className={cn("w-4 h-4 rounded-full", color.class.split(' ')[0])}></div>
-                                            <span>{t(`color_${color.name.toLowerCase()}`)}</span>
-                                        </div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+  React.useEffect(() => {
+    setLocalColors(initialColors);
+    setHasChanges(false);
+  }, [initialColors]);
+
+  const handleColorChange = (shiftType: ShiftType, colorClass: string) => {
+    setLocalColors((prev) => ({ ...prev, [shiftType]: colorClass }));
+    setHasChanges(true);
+  };
+  
+  const handleSave = () => {
+    onSave(localColors);
+    setHasChanges(false);
+  }
+
+  const shiftTypes = Object.keys(localColors) as ShiftType[];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Palette className="w-5 h-5 text-primary" />
+          <span>{t("roster_settings_title")}</span>
+        </CardTitle>
+        <CardDescription>{t("roster_settings_desc")}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {shiftTypes.map((shiftType) => (
+          <div key={shiftType} className="flex items-center justify-between">
+            <Label>{t(`shift_${shiftType}`)}</Label>
+            <Select
+              value={localColors[shiftType]}
+              onValueChange={(value) => handleColorChange(shiftType, value)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={t("select_color_placeholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map((color) => (
+                  <SelectItem key={color.class} value={color.class}>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn(
+                          "w-4 h-4 rounded-full",
+                          color.class.split(" ")[0]
+                        )}
+                      ></div>
+                      <span>{t(`color_${color.name.toLowerCase()}`)}</span>
                     </div>
+                  </SelectItem>
                 ))}
-            </CardContent>
-        </Card>
-    );
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+        {hasChanges && (
+            <div className="flex justify-end pt-4">
+                <Button onClick={handleSave}>{t('save_changes')}</Button>
+            </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }

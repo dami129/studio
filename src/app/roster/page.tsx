@@ -14,6 +14,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useLanguage } from "@/hooks/use-language";
 import FloatingCalculator from "@/components/calculator/floating-calculator";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 function calculateMonthlySummary(duties: Duty[], currentMonth: Date) {
   if (!currentMonth || !(currentMonth instanceof Date) || isNaN(currentMonth.getTime())) {
@@ -45,21 +46,23 @@ function calculateMonthlySummary(duties: Duty[], currentMonth: Date) {
   };
 }
 
+const defaultShiftColors: ShiftColors = {
+  Morning: "bg-blue-200 text-blue-800 hover:bg-blue-200/80",
+  Evening: "bg-orange-200 text-orange-800 hover:bg-orange-200/80",
+  Night: "bg-indigo-200 text-indigo-800 hover:bg-indigo-200/80",
+  'Overtime (Morning)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
+  'Overtime (Evening)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
+  'Overtime (Night)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
+  Training: "bg-green-200 text-green-800 hover:bg-green-200/80",
+  'Leave (CL/VL/SL)': "bg-purple-200 text-purple-800 hover:bg-purple-200/80",
+  'Off (Day Off)': "bg-gray-200 text-gray-800 hover:bg-gray-200/80",
+};
+
 
 export default function RosterPage() {
   const { t } = useLanguage();
   const { duties, updateDuty } = useDuties();
-  const [shiftColors, setShiftColors] = React.useState<ShiftColors>({
-    Morning: "bg-blue-200 text-blue-800 hover:bg-blue-200/80",
-    Evening: "bg-orange-200 text-orange-800 hover:bg-orange-200/80",
-    Night: "bg-indigo-200 text-indigo-800 hover:bg-indigo-200/80",
-    'Overtime (Morning)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
-    'Overtime (Evening)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
-    'Overtime (Night)': "bg-yellow-300 text-yellow-900 hover:bg-yellow-300/80",
-    Training: "bg-green-200 text-green-800 hover:bg-green-200/80",
-    'Leave (CL/VL/SL)': "bg-purple-200 text-purple-800 hover:bg-purple-200/80",
-    'Off (Day Off)': "bg-gray-200 text-gray-800 hover:bg-gray-200/80",
-  });
+  const [shiftColors, setShiftColors] = useLocalStorage<ShiftColors>('shiftColors', defaultShiftColors);
 
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const calendarRef = React.useRef<HTMLDivElement>(null);
@@ -68,8 +71,8 @@ export default function RosterPage() {
     updateDuty(date, type);
   };
 
-  const handleColorChange = (shiftType: ShiftType, colorClass: string) => {
-    setShiftColors(prev => ({ ...prev, [shiftType]: colorClass }));
+  const handleColorSave = (newColors: ShiftColors) => {
+    setShiftColors(newColors);
   };
 
   const month = startOfMonth(currentDate);
@@ -161,8 +164,8 @@ export default function RosterPage() {
         <div className="space-y-6">
           <RosterSummary items={summaryItems} />
           <RosterSettings 
-            shiftColors={shiftColors}
-            onColorChange={handleColorChange}
+            initialColors={shiftColors}
+            onSave={handleColorSave}
           />
         </div>
       </div>
