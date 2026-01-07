@@ -9,8 +9,9 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Icons } from "@/components/icons";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Calendar,
   HeartPulse,
@@ -18,11 +19,13 @@ import {
   User,
   Wallet,
   Menu,
+  Plus,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useLanguage } from "@/hooks/use-language";
+import { useProfile } from "@/hooks/use-profile";
 
 function MainNav() {
   const pathname = usePathname();
@@ -43,9 +46,8 @@ function MainNav() {
           <SidebarMenuButton
             asChild
             isActive={pathname === item.href}
-            variant="default"
-            size="default"
-            className="justify-start"
+            variant="ghost"
+            className="justify-start data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
             tooltip={item.label}
           >
             <Link href={item.href}>
@@ -74,21 +76,32 @@ function AppHeader() {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const { user } = useProfile();
+
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar collapsible="icon">
-        <SidebarHeader className="hidden md:flex items-center gap-3 p-4">
-          <div className="w-[44px] h-[44px] rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105">
-            <Icons.logo className="w-[26px] h-[26px] text-primary dark:filter dark:brightness-125" />
-          </div>
+      <Sidebar collapsible="icon" variant="sidebar">
+         <SidebarHeader className="hidden md:flex flex-col items-center gap-4 p-4 text-center">
+          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-md transition-transform hover:scale-105 dark:bg-slate-800">
+            <Plus className="h-6 w-6" />
+            <span className="sr-only">Add</span>
+          </button>
           <div className="flex flex-col">
-            <h3 className="m-0 text-[15px] font-semibold text-gray-800 dark:text-slate-200">NurseCare</h3>
-            <span className="text-xs text-gray-500 dark:text-slate-400">Sri Lanka</span>
+            <h3 className="text-base font-semibold text-foreground">NurseCare</h3>
+            <span className="text-xs text-muted-foreground">Sri Lanka</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
           <MainNav />
         </SidebarContent>
+        <SidebarFooter className="hidden md:flex p-4">
+           <Link href="/profile" className="flex items-center gap-3">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{user.name ? user.name.charAt(0).toUpperCase() : 'N'}</AvatarFallback>
+              </Avatar>
+           </Link>
+        </SidebarFooter>
       </Sidebar>
       <div className="flex flex-1 flex-col">
         <AppHeader />
