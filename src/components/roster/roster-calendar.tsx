@@ -23,6 +23,27 @@ const normalShifts: ShiftType[] = ["Morning", "Evening", "Night"];
 const specialShifts: ShiftType[] = ["Training", "Leave (CL/VL/SL)", "Off (Day Off)"];
 const overtimeShifts: ShiftType[] = ["Overtime (Morning)", "Overtime (Evening)", "Overtime (Night)"];
 
+function getDutyShortLabel(type: ShiftType) {
+  switch (type) {
+    case "Morning":
+      return "M";
+    case "Evening":
+      return "E";
+    case "Night":
+      return "N";
+    case "Overtime (Morning)":
+      return "OT-M";
+    case "Overtime (Evening)":
+      return "OT-E";
+    case "Overtime (Night)":
+      return "OT-N";
+    case "Training":
+        return "T"
+    default:
+      const short = type.split(' ')[0];
+      return short.length > 5 ? short.substring(0,3) : short;
+  }
+}
 
 const RosterCalendar = React.forwardRef<
   HTMLDivElement,
@@ -146,12 +167,13 @@ const RosterCalendar = React.forwardRef<
                       <Badge
                         key={i}
                         className={cn(
-                          "text-xs font-bold justify-center",
+                          "text-[10px] md:text-xs font-bold justify-center truncate",
                           shiftColors[shift]
                         )}
                         variant="default"
                       >
-                        {getShiftLabel(shift)}
+                         <span className="hidden md:inline">{getShiftLabel(shift)}</span>
+                         <span className="inline md:hidden">{getDutyShortLabel(shift)}</span>
                       </Badge>
                     ))}
                   </div>
