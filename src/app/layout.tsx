@@ -10,7 +10,6 @@ import { IncomeProvider } from '@/hooks/use-income';
 import { ProfileProvider } from '@/hooks/use-profile';
 import { LanguageProvider } from '@/hooks/use-language';
 import { ThemeProvider } from '@/components/layout/theme-provider';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -32,23 +31,21 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
-        <FirebaseClientProvider>
-            <ProfileProvider>
-            <ThemeProvider>
-                <LanguageProvider>
-                <DutiesProvider>
-                    <ExpensesProvider>
-                    <IncomeProvider>
-                        <SidebarProvider>
-                        <AppShell>{children}</AppShell>
-                        </SidebarProvider>
-                    </IncomeProvider>
-                    </ExpensesProvider>
-                </DutiesProvider>
-                </LanguageProvider>
-            </ThemeProvider>
-            </ProfileProvider>
-        </FirebaseClientProvider>
+        <ProfileProvider>
+          <ThemeProvider>
+            <LanguageProvider>
+              <DutiesProvider>
+                <ExpensesProvider>
+                  <IncomeProvider>
+                    <SidebarProvider>
+                      <AppShell>{children}</AppShell>
+                    </SidebarProvider>
+                  </IncomeProvider>
+                </ExpensesProvider>
+              </DutiesProvider>
+            </LanguageProvider>
+          </ThemeProvider>
+        </ProfileProvider>
         <Toaster />
       </body>
     </html>

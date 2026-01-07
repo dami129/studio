@@ -2,9 +2,7 @@
 
 import * as React from 'react';
 import type { UserProfile } from '@/lib/types';
-import { useUser } from '@/firebase';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
+import { useLocalStorage } from './use-local-storage';
 
 const initialUser: UserProfile = {
   name: 'Ayesha Perera',
@@ -34,43 +32,16 @@ const ProfileContext = React.createContext<ProfileContextType | undefined>(
 );
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
-  const { user: authUser } = useUser();
-  const firestore = useFirestore();
-  const [user, setUser] = React.useState<UserProfile>(initialUser);
-  const userDocRef = React.useMemo(() => authUser && firestore ? doc(firestore, 'users', authUser.uid) : null, [authUser, firestore]);
+  const [user, setUser] = useLocalStorage<UserProfile>('userProfile', initialUser);
+
+  const updateUser = (newUserData: Partial<UserProfile>) => {
+    setUser((prevUser) => ({ ...prevUser, ...newUserData }));
+  };
   
-  React.useEffect(() => {
-    if (!userDocRef) {
-        setUser(initialUser);
-        return;
-    };
-
-    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setUser({ ...initialUser, ...docSnap.data() } as UserProfile);
-      } else {
-        // Document doesn't exist, so create it with initial data
-        setDoc(userDocRef, initialUser);
-        setUser(initialUser);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [userDocRef]);
-
-
-  const updateUser = React.useCallback((newUserData: Partial<UserProfile>) => {
-      if (!userDocRef) return;
-      setDoc(userDocRef, newUserData, { merge: true });
-    }, [userDocRef]
-  );
-  
-  // Avatar is part of the user profile now
   const avatar = user.avatar;
   const updateAvatar = (newAvatar: string) => {
     updateUser({ avatar: newAvatar });
   };
-
 
   const value = React.useMemo(
     () => ({ user, updateUser, avatar, updateAvatar }),

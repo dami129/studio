@@ -2,15 +2,13 @@
 
 import * as React from 'react';
 import type { Duty } from '@/lib/types';
-import { useUser } from '@/firebase';
-import { collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
+import { useLocalStorage } from './use-local-storage';
 import { mockDuties } from '@/lib/data';
 
 type DutiesContextType = {
   duties: Duty[];
-  setDuties: (duties: Duty[]) => Promise<void>;
-  updateDuty: (date: string, type: Duty['type']) => Promise<void>;
+  setDuties: (duties: Duty[]) => void;
+  updateDuty: (date: string, type: Duty['type']) => void;
 };
 
 const DutiesContext = React.createContext<DutiesContextType | undefined>(
@@ -18,71 +16,28 @@ const DutiesContext = React.createContext<DutiesContextType | undefined>(
 );
 
 export function DutiesProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useUser();
-  const firestore = useFirestore();
-  const [duties, setDutiesState] = React.useState<Duty[]>([]);
-  const dutiesRef = React.useMemo(() => user && firestore ? collection(firestore, 'users', user.uid, 'duties') : null, [user, firestore]);
+  const [duties, setDuties] = useLocalStorage<Duty[]>('duties', mockDuties);
 
-  React.useEffect(() => {
-    if (!dutiesRef) {
-      setDutiesState([]);
-      return;
-    };
+  const sortedDuties = React.useMemo(() => {
+    return [...duties].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [duties]);
 
-    const unsubscribe = onSnapshot(dutiesRef, (snapshot) => {
-      const dutiesData = snapshot.docs.map(doc => doc.data() as Duty);
-      if (dutiesData.length === 0) {
-        // One-time write for mock data if the collection is empty
-        const batch = writeBatch(firestore);
-        mockDuties.forEach((duty) => {
-          const docRef = doc(dutiesRef, duty.date);
-          batch.set(docRef, duty);
-        });
-        batch.commit();
-      } else {
-        dutiesData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        setDutiesState(dutiesData);
-      }
-    });
+  const updateDuty = (date: string, type: Duty['type']) => {
+    const dutyId = `${date}_${type}`;
+    const dutyExists = duties.some((d) => d.id === dutyId);
 
-    return () => unsubscribe();
-  }, [dutiesRef, firestore]);
-
-  const setDuties = async (newDuties: Duty[]) => {
-    if (!dutiesRef) return;
-    const batch = writeBatch(firestore);
-    
-    // First, delete all existing duties for the user
-    const existingDutiesSnapshot = await getDocs(dutiesRef);
-    existingDutiesSnapshot.forEach(doc => {
-      batch.delete(doc.ref);
-    });
-
-    // Now, add the new duties
-    newDuties.forEach((duty) => {
-      const docRef = doc(dutiesRef, duty.date);
-      batch.set(docRef, duty);
-    });
-
-    await batch.commit();
-  };
-
-  const updateDuty = async (date: string, type: Duty['type']) => {
-    if (!dutiesRef) return;
-  
-    const dutyDocRef = doc(dutiesRef, `${date}_${type}`);
-    const existingDuty = duties.find(d => d.id === `${date}_${type}`);
-
-    if (existingDuty) {
-      await deleteDoc(dutyDocRef);
+    let newDuties: Duty[];
+    if (dutyExists) {
+      newDuties = duties.filter((d) => d.id !== dutyId);
     } else {
-      const newDuty = { id: `${date}_${type}`, date, type };
-      await setDoc(dutyDocRef, newDuty);
+      newDuties = [...duties, { id: dutyId, date, type }];
     }
+    setDuties(newDuties);
   };
 
-
-  const value = { duties, setDuties, updateDuty };
+  const value = { duties: sortedDuties, setDuties, updateDuty };
 
   return (
     <DutiesContext.Provider value={value}>{children}</DutiesContext.Provider>

@@ -2,9 +2,7 @@
 
 import * as React from 'react';
 import type { Income, IncomeSource } from '@/lib/types';
-import { useUser } from '@/firebase';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
+import { useLocalStorage } from './use-local-storage';
 import { mockIncome } from '@/lib/data';
 
 type IncomeContextType = {
@@ -18,36 +16,13 @@ const IncomeContext = React.createContext<IncomeContextType | undefined>(
 );
 
 export function IncomeProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useUser();
-  const firestore = useFirestore();
-  const [income, setIncome] = React.useState<Income>(mockIncome);
-  const incomeDocRef = React.useMemo(() => user && firestore ? doc(firestore, 'users', user.uid, 'data', 'income') : null, [user, firestore]);
-
-  React.useEffect(() => {
-    if (!incomeDocRef) {
-        setIncome(mockIncome);
-        return
-    };
-
-    const unsubscribe = onSnapshot(incomeDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const validatedIncome = { ...mockIncome, ...docSnap.data() };
-        setIncome(validatedIncome);
-      } else {
-        // One-time write for mock data if the document doesn't exist
-        setDoc(incomeDocRef, mockIncome);
-        setIncome(mockIncome);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [incomeDocRef]);
-
+  const [income, setIncome] = useLocalStorage<Income>('income', mockIncome);
 
   const updateIncome = (source: IncomeSource, amount: number) => {
-    if (!incomeDocRef) return;
-    const newIncome = { ...income, [source]: amount };
-    setDoc(incomeDocRef, newIncome, { merge: true });
+    setIncome((prev) => ({
+      ...prev,
+      [source]: amount,
+    }));
   };
 
   const totalIncome = React.useMemo(() => {
