@@ -47,6 +47,12 @@ const RosterCalendar = React.forwardRef<
   const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
   const [showOvertimeOptions, setShowOvertimeOptions] = React.useState(false);
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
 
   const dutiesByDate = React.useMemo(() => {
     const map = new Map<string, ShiftType[]>();
@@ -87,6 +93,9 @@ const RosterCalendar = React.forwardRef<
   
   const getShiftLabel = (shift: ShiftType) => t(`shift_${shift.toLowerCase().replace(/[^a-z0-9]/g, '_')}`);
 
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <>
