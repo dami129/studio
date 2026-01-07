@@ -94,6 +94,11 @@ export default function Home() {
   const { user, updateUser } = useProfile();
   const { toast } = useToast();
   
+  const [isClient, setIsClient] = React.useState(false);
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const schedule = getSchedule(duties);
 
   React.useEffect(() => {
@@ -150,6 +155,10 @@ export default function Home() {
     { value: 'tired', label: t('feeling_tired'), icon: <Frown className="w-4 h-4 mr-2" /> },
     { value: 'stressed', label: t('feeling_stressed'), icon: <Smile className="w-4 h-4 mr-2" /> },
   ];
+
+  if (!isClient) {
+    return null; // Render nothing on the server to avoid mismatch
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
