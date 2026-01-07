@@ -3,6 +3,8 @@
 
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
+import * as DialogPrimitive from "@radix-ui/react-dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
 import { cn } from "@/lib/utils"
 
@@ -49,6 +51,9 @@ const DrawerContent = React.forwardRef<
       )}
       {...props}
     >
+      <VisuallyHidden>
+        <DialogPrimitive.Title>Drawer Menu</DialogPrimitive.Title>
+      </VisuallyHidden>
       <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
       {children}
     </DrawerPrimitive.Content>
