@@ -10,6 +10,7 @@ import { IncomeProvider } from '@/hooks/use-income';
 import { ProfileProvider } from '@/hooks/use-profile';
 import { LanguageProvider } from '@/hooks/use-language';
 import { ThemeProvider } from '@/components/layout/theme-provider';
+import MobileBottomNav from '@/components/layout/mobile-bottom-nav';
 
 export const metadata: Metadata = {
   title: 'NurseCare Sri Lanka',
@@ -38,7 +39,10 @@ export default function RootLayout({
                 <ExpensesProvider>
                   <IncomeProvider>
                     <SidebarProvider>
-                      <AppShell>{children}</AppShell>
+                      <div className="pb-16 md:pb-0">
+                        <AppShell>{children}</AppShell>
+                      </div>
+                      <MobileBottomNav />
                     </SidebarProvider>
                   </IncomeProvider>
                 </ExpensesProvider>

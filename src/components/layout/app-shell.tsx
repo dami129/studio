@@ -14,8 +14,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Calendar,
+  LayoutGrid,
   HeartPulse,
-  LayoutDashboard,
   User,
   Wallet,
   Menu,
@@ -32,7 +32,7 @@ function MainNav() {
   const { t } = useLanguage();
 
   const navItems = [
-    { href: "/", icon: LayoutDashboard, label: t('nav_dashboard') },
+    { href: "/", icon: LayoutGrid, label: t('nav_dashboard') },
     { href: "/roster", icon: Calendar, label: t('nav_roster') },
     { href: "/budget", icon: Wallet, label: t('nav_budget') },
     { href: "/motivation", icon: HeartPulse, label: t('nav_motivation') },
@@ -63,8 +63,8 @@ function MainNav() {
 
 function AppHeader() {
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 sm:px-6">
-      <SidebarTrigger className="md:hidden">
+    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:h-16 sm:px-6 md:hidden">
+      <SidebarTrigger>
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle Menu</span>
       </SidebarTrigger>
@@ -76,16 +76,12 @@ function AppHeader() {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { user } = useProfile();
+  const { user, avatar } = useProfile();
 
   return (
     <div className="flex min-h-screen w-full">
       <Sidebar collapsible="icon" variant="sidebar">
          <SidebarHeader className="hidden md:flex flex-col items-center gap-4 p-4 text-center">
-          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-md transition-transform hover:scale-105 dark:bg-slate-800">
-            <Plus className="h-6 w-6" />
-            <span className="sr-only">Add</span>
-          </button>
           <div className="flex flex-col">
             <h3 className="text-base font-semibold text-foreground">NurseCare</h3>
             <span className="text-xs text-muted-foreground">Sri Lanka</span>
@@ -97,7 +93,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarFooter className="hidden md:flex p-4">
            <Link href="/profile" className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={avatar} alt={user.name} />
                 <AvatarFallback>{user.name ? user.name.charAt(0).toUpperCase() : 'N'}</AvatarFallback>
               </Avatar>
            </Link>
