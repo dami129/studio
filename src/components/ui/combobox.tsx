@@ -57,14 +57,14 @@ function ComboboxContent({
                     key={item.value}
                     value={item.value}
                     onSelect={(currentValue) => {
-                        onChange(currentValue === value ? "" : currentValue);
+                        onChange(currentValue.toLowerCase() === value.toLowerCase() ? "" : item.value);
                         onSelect();
                     }}
                     >
                     <Check
                         className={cn(
                         "mr-2 h-4 w-4",
-                        value === item.value ? "opacity-100" : "opacity-0"
+                        value.toLowerCase() === item.value.toLowerCase() ? "opacity-100" : "opacity-0"
                         )}
                     />
                     {item.label}
