@@ -100,7 +100,7 @@ export function BudgetSummaryChart({ expenses }: { expenses: Expense[] }) {
   }, [expenses])
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-[350px]">
       <CardHeader className="items-center pb-0">
         <CardTitle>{t('spending_overview')}</CardTitle>
         <CardDescription>{t('spending_overview_desc')}</CardDescription>

@@ -74,11 +74,24 @@ export default function BudgetPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
             <AddExpenseForm />
-            <DailyExpenses expenses={dailyExpenses} />
-            <RecentExpenses expenses={monthlyExpenses} />
+            {mounted ? (
+              <>
+                <DailyExpenses expenses={dailyExpenses} />
+                <RecentExpenses expenses={monthlyExpenses} />
+              </>
+            ) : (
+              <>
+                <Skeleton className="h-36 w-full" />
+                <Skeleton className="h-56 w-full" />
+              </>
+            )}
         </div>
         <div className="space-y-6">
-            <BudgetSummaryChart expenses={monthlyExpenses} />
+            {mounted ? (
+              <BudgetSummaryChart expenses={monthlyExpenses} />
+            ) : (
+              <Skeleton className="h-[350px] w-full" />
+            )}
         </div>
       </div>
       <FloatingCalculator />
