@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -7,7 +8,7 @@ import { mockIncome } from '@/lib/data';
 
 type IncomeContextType = {
   income: Income;
-  updateIncome: (source: IncomeSource, amount: number) => void;
+  updateIncome: (newIncome: Partial<Income>) => void;
   totalIncome: number;
 };
 
@@ -18,10 +19,10 @@ const IncomeContext = React.createContext<IncomeContextType | undefined>(
 export function IncomeProvider({ children }: { children: React.ReactNode }) {
   const [income, setIncome] = useLocalStorage<Income>('income', mockIncome);
 
-  const updateIncome = (source: IncomeSource, amount: number) => {
+  const updateIncome = (newIncome: Partial<Income>) => {
     setIncome((prev) => ({
       ...prev,
-      [source]: amount,
+      ...newIncome,
     }));
   };
 

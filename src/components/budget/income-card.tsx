@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -7,7 +8,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import type { IncomeSource } from "@/lib/types";
-import { Check, Edit } from "lucide-react";
+import { Check, Edit, X } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 
 const incomeSources: { id: IncomeSource; label: string }[] = [
@@ -26,7 +27,7 @@ export function IncomeCard() {
 
     React.useEffect(() => {
         setLocalIncome(income);
-    }, [income]);
+    }, [income, isEditing]);
 
     const handleInputChange = (source: IncomeSource, value: string) => {
         const amount = parseFloat(value) || 0;
@@ -34,11 +35,13 @@ export function IncomeCard() {
     };
 
     const handleSave = () => {
-        (Object.keys(localIncome) as IncomeSource[]).forEach(source => {
-            updateIncome(source, localIncome[source]);
-        });
+        updateIncome(localIncome);
         setIsEditing(false);
     };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+    }
     
     const formatter = new Intl.NumberFormat('en-LK', {
         style: 'currency',
@@ -50,10 +53,18 @@ export function IncomeCard() {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{t('total_income')}</CardTitle>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
-                    {isEditing ? <Check className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
-                    <span className="sr-only">{isEditing ? t('save') : t('edit')}</span>
-                </Button>
+                <div className="flex items-center">
+                    {isEditing && (
+                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleCancel}>
+                            <X className="h-4 w-4" />
+                            <span className="sr-only">{t('cancel')}</span>
+                        </Button>
+                    )}
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
+                        {isEditing ? <Check className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                        <span className="sr-only">{isEditing ? t('save') : t('edit')}</span>
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent>
                 {!isEditing ? (
