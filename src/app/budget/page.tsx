@@ -12,11 +12,18 @@ import { isSameMonth, parseISO, isToday } from "date-fns";
 import { DailyExpenses } from "@/components/budget/daily-expenses";
 import { useLanguage } from "@/hooks/use-language";
 import FloatingCalculator from "@/components/calculator/floating-calculator";
+import * as React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BudgetPage() {
   const { expenses } = useExpenses();
   const { totalIncome } = useIncome();
   const { t } = useLanguage();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const currentMonth = new Date();
   const monthlyExpenses = expenses.filter(expense => isSameMonth(parseISO(expense.date), currentMonth));
@@ -50,7 +57,7 @@ export default function BudgetPage() {
                 <span className="text-sm text-muted-foreground">LKR</span>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">{formatter.format(totalExpenses)}</div>
+                {mounted ? <div className="text-2xl font-bold">{formatter.format(totalExpenses)}</div> : <Skeleton className="h-8 w-32" />}
             </CardContent>
         </Card>
         <Card>
@@ -59,7 +66,7 @@ export default function BudgetPage() {
                 <span className="text-sm text-muted-foreground">LKR</span>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold text-primary">{formatter.format(remaining)}</div>
+                {mounted ? <div className="text-2xl font-bold text-primary">{formatter.format(remaining)}</div> : <Skeleton className="h-8 w-32" />}
             </CardContent>
         </Card>
       </div>
