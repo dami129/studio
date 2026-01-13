@@ -10,6 +10,7 @@ import { Label } from "../ui/label";
 import type { IncomeSource } from "@/lib/types";
 import { Check, Edit, X } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
+import { Skeleton } from "../ui/skeleton";
 
 const incomeSources: { id: IncomeSource; label: string }[] = [
     { id: "jobSalary", label: "income_source_job_salary" },
@@ -24,6 +25,11 @@ export function IncomeCard() {
     const { t } = useLanguage();
     const [isEditing, setIsEditing] = React.useState(false);
     const [localIncome, setLocalIncome] = React.useState(income);
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     React.useEffect(() => {
         setLocalIncome(income);
@@ -40,6 +46,7 @@ export function IncomeCard() {
     };
 
     const handleCancel = () => {
+        setLocalIncome(income);
         setIsEditing(false);
     }
     
@@ -68,7 +75,7 @@ export function IncomeCard() {
             </CardHeader>
             <CardContent>
                 {!isEditing ? (
-                     <div className="text-2xl font-bold">{formatter.format(totalIncome)}</div>
+                     mounted ? <div className="text-2xl font-bold">{formatter.format(totalIncome)}</div> : <Skeleton className="h-8 w-32" />
                 ) : (
                     <div className="space-y-4 pt-2">
                         {incomeSources.map(source => (
